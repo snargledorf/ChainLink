@@ -25,7 +25,7 @@ namespace ChainLink
         private readonly IRunChainLink chainLink;
         private readonly IEnumerable<IChainLinkRunner> childLinkRunners;
 
-        public RunChainLinkRunner(IRunChainLink chainLink, IEnumerable<IChainLinkRunner> childLinkRunners)
+        public RunChainLinkRunner(IRunChainLink chainLink, IChainLinkRunner[] childLinkRunners)
         {
             this.chainLink = chainLink;
             this.childLinkRunners = childLinkRunners;
@@ -44,7 +44,7 @@ namespace ChainLink
         private readonly IRunChainLink<T> chainLink;
         private readonly IEnumerable<IChainLinkRunner> childLinkRunners;
 
-        public RunChainLinkRunner(IRunChainLink<T> chainLink, IEnumerable<IChainLinkRunner> childLinkRunners)
+        public RunChainLinkRunner(IRunChainLink<T> chainLink, IChainLinkRunner[] childLinkRunners)
         {
             this.chainLink = chainLink;
             this.childLinkRunners = childLinkRunners;
@@ -63,7 +63,7 @@ namespace ChainLink
         private readonly IResultChainLink<T> chainLink;
         private readonly IEnumerable<IChainLinkRunner> childLinkRunners;
 
-        public ResultChainLinkRunner(IResultChainLink<T> chainLink, IEnumerable<IChainLinkRunner> childLinkRunners)
+        public ResultChainLinkRunner(IResultChainLink<T> chainLink, IChainLinkRunner[] childLinkRunners)
         {
             this.chainLink = chainLink;
             this.childLinkRunners = childLinkRunners;
@@ -96,7 +96,7 @@ namespace ChainLink
         private readonly TChainLink chainLink;
         private readonly IEnumerable<IChainLinkRunner> childLinkRunners;
 
-        public RunResultChainLinkRunner(TChainLink chainLink, IEnumerable<IChainLinkRunner> childLinkRunners)
+        public RunResultChainLinkRunner(TChainLink chainLink, IChainLinkRunner[] childLinkRunners)
         {
             this.chainLink = chainLink;
             this.childLinkRunners = childLinkRunners;
@@ -130,7 +130,7 @@ namespace ChainLink
         private readonly TChainLink chainLink;
         private readonly IEnumerable<IChainLinkRunner> childLinkRunners;
 
-        public RunResultChainLinkRunner(TChainLink chainLink, IEnumerable<IChainLinkRunner> childLinkRunners)
+        public RunResultChainLinkRunner(TChainLink chainLink, IChainLinkRunner[] childLinkRunners)
         {
             this.chainLink = chainLink;
             this.childLinkRunners = childLinkRunners;

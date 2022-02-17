@@ -136,5 +136,50 @@ namespace ChainLink.Tests
 
             Assert.AreEqual(Expected, trimmedString);
         }
+
+        [TestMethod]
+        public async Task CreateChainWithDelegatesCallBuildOnAllBranches()
+        {
+            const string Expected = "Hello World";
+
+            var helloWorldResult = ChainBuilder
+                .StartWith(() => " Hello World ");
+
+            string? trimmedString = null;
+            string? helloWorld = null;
+
+            IChain chain1 = helloWorldResult
+                .RunWithResult<string?, TrimInputStringLink>()
+                .RunWithResult(input => trimmedString = input)
+                .Build();
+
+            IChain chain2 = helloWorldResult
+                .GetResult<string, HelloWorldLink>()
+                .RunWithResult(input => helloWorld = input)
+                .Build();
+
+            IChain chain3 = helloWorldResult.Build();
+
+            await chain1.RunAsync();
+
+            Assert.AreEqual(Expected, trimmedString);
+            Assert.IsNull(helloWorld);
+
+            trimmedString = null;
+            helloWorld = null;
+
+            await chain2.RunAsync();
+
+            Assert.AreEqual(Expected, trimmedString);
+            Assert.AreEqual(Expected, helloWorld);
+
+            trimmedString = null;
+            helloWorld = null;
+
+            await chain3.RunAsync();
+
+            Assert.AreEqual(Expected, trimmedString);
+            Assert.AreEqual(Expected, helloWorld);
+        }
     }
 }

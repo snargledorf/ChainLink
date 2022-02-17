@@ -9,7 +9,7 @@ namespace ChainLink.ChainBuilders
         where TChainLink : IResultChainLink<T>
     {
         public ResultChainBuilder(object[] chainLinkArgs, IChainBuilder previous = null)
-            : base(typeof(TChainLink), chainLinkArgs, previous)
+            : base(chainLinkArgs, previous)
         {
         }
 
@@ -27,7 +27,7 @@ namespace ChainLink.ChainBuilders
 
         public override IChainLinkRunner CreateChainLinkRunner()
         {
-            return new ResultChainLinkRunner<T>(ReflectionUtils.CreateObject<TChainLink>(ChainLinkArgs), Children.Select(c => c.CreateChainLinkRunner()));
+            return new ResultChainLinkRunner<T>(ReflectionUtils.CreateObject<TChainLink>(ChainLinkArgs), Children.Select(c => c.CreateChainLinkRunner()).ToArray());
         }
 
         public IRunChainBuilder<T, DelegateRunChainLink<T>> RunWithResult(Action<T> del)

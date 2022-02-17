@@ -6,13 +6,13 @@ namespace ChainLink.ChainBuilders
         where TChainLink : IRunChainLink
     {
         internal RunChainBuilder(object[] chainLinkArgs, IChainBuilder previous = null)
-            : base(typeof(TChainLink), chainLinkArgs, previous)
+            : base(chainLinkArgs, previous)
         {
         }
 
         public override IChainLinkRunner CreateChainLinkRunner()
         {
-            return new RunChainLinkRunner(ReflectionUtils.CreateObject<TChainLink>(ChainLinkArgs), Children.Select(c => c.CreateChainLinkRunner()));
+            return new RunChainLinkRunner(ReflectionUtils.CreateObject<TChainLink>(ChainLinkArgs), Children.Select(c => c.CreateChainLinkRunner()).ToArray());
         }
     }
 
@@ -20,13 +20,13 @@ namespace ChainLink.ChainBuilders
         where TChainLink : IRunChainLink<T>
     {
         public RunChainBuilder(object[] chainLinkArgs, IChainBuilder previous)
-            : base(typeof(TChainLink), chainLinkArgs, previous)
+            : base(chainLinkArgs, previous)
         {
         }
 
         public override IChainLinkRunner CreateChainLinkRunner()
         {
-            return new RunChainLinkRunner<T>(ReflectionUtils.CreateObject<TChainLink>(ChainLinkArgs), Children.Select(c => c.CreateChainLinkRunner()));
+            return new RunChainLinkRunner<T>(ReflectionUtils.CreateObject<TChainLink>(ChainLinkArgs), Children.Select(c => c.CreateChainLinkRunner()).ToArray());
         }
     }
 }

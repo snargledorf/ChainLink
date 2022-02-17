@@ -9,7 +9,7 @@ namespace ChainLink.ChainBuilders
 {
     public abstract class ChainBuilder : IChainBuilder
     {
-        protected ChainBuilder(Type chainLinkType, object[] chainLinkArgs, IChainBuilder previous = null)
+        protected ChainBuilder(object[] chainLinkArgs, IChainBuilder previous = null)
         {
             ChainLinkArgs = chainLinkArgs;
             Previous = previous;

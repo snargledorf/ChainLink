@@ -27,7 +27,9 @@ namespace ChainLink.ChainBuilders
 
         public override IChainLinkRunner CreateChainLinkRunner()
         {
-            return new RunResultChainLinkRunner<TInput, TChainLink>(ReflectionUtils.CreateObject<TChainLink>(ChainLinkArgs), Children.Select(c => c.CreateChainLinkRunner()));
+            return new RunResultChainLinkRunner<TInput, TChainLink>(
+                ReflectionUtils.CreateObject<TChainLink>(ChainLinkArgs),
+                Children.Select(c => c.CreateChainLinkRunner()).ToArray());
         }
 
         public IInputRunChainBuilder<T, TInput, DelegateRunChainLink<TInput>> RunWithResult(Action<TInput> del)
@@ -103,7 +105,9 @@ namespace ChainLink.ChainBuilders
 
         public override IChainLinkRunner CreateChainLinkRunner()
         {
-            return new RunResultChainLinkRunner<TInput, TResult, TChainLink>(ReflectionUtils.CreateObject<TChainLink>(ChainLinkArgs), Children.Select(c => c.CreateChainLinkRunner()));
+            return new RunResultChainLinkRunner<TInput, TResult, TChainLink>(
+                ReflectionUtils.CreateObject<TChainLink>(ChainLinkArgs),
+                Children.Select(c => c.CreateChainLinkRunner()).ToArray());
         }
 
         public IInputRunChainBuilder<T, TResult, DelegateRunChainLink<TResult>> RunWithResult(Action<TResult> del)
