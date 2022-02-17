@@ -2,6 +2,6 @@
 {
     internal class HelloWorldLink : IResultChainLink<string>
     {
-        public string Result => "Hello World";
+        public string Result { get; } = "Hello World";
     }
 }
