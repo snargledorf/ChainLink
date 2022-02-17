@@ -11,7 +11,6 @@ namespace ChainLink.ChainBuilders
     {
         protected ChainBuilder(Type chainLinkType, object[] chainLinkArgs, IChainBuilder previous = null)
         {
-            ChainLinkType = chainLinkType;
             ChainLinkArgs = chainLinkArgs;
             Previous = previous;
         }
@@ -20,9 +19,7 @@ namespace ChainLink.ChainBuilders
 
         public IChainBuilder Previous { get; }
 
-        public Type ChainLinkType { get; }
-
-        public object[] ChainLinkArgs { get; }
+        protected object[] ChainLinkArgs { get; }
 
         protected List<IChainBuilder> Children { get; } = new List<IChainBuilder>();
 
@@ -36,6 +33,48 @@ namespace ChainLink.ChainBuilders
             where TChainLink : IResultChainLink<T>
         {
             return new ResultChainBuilder<T, TChainLink>(args);
+        }
+
+        public static IInputRunChainBuilder<T, T, TChainLink> StartWithInputInto<T, TChainLink>(params object[] args)
+            where TChainLink : IRunChainLink<T>
+        {
+            return new InputRunChainBuilder<T, T, TChainLink>(args);
+        }
+
+        public static IInputRunResultChainBuilder<T, T, TResult, TChainLink> StartWithInputInto<T, TResult, TChainLink>(params object[] args)
+            where TChainLink : IRunChainLink<T>, IResultChainLink<TResult>
+        {
+            return new InputRunResultChainBuilder<T, T, TResult, TChainLink>(args);
+        }
+
+        public static IInputRunResultChainBuilder<T, T, TResult, DelegateRunResultChainLink<T, TResult>> StartWithInputInto<T, TResult>(Func<T, TResult> del)
+        {
+            return StartWithInputInto<T, TResult>((input, _, cancel) => Task.Run(() => del(input), cancel));
+        }
+
+        public static IInputRunResultChainBuilder<T, T, TResult, DelegateRunResultChainLink<T, TResult>> StartWithInputInto<T, TResult>(Func<T, Task<TResult>> del)
+        {
+            return StartWithInputInto<T, TResult>((input, _, __) => del(input));
+        }
+
+        public static IInputRunResultChainBuilder<T, T, TResult, DelegateRunResultChainLink<T, TResult>> StartWithInputInto<T, TResult>(Func<T, IChainLinkRunContext, TResult> del)
+        {
+            return StartWithInputInto<T, TResult>((input, context, cancel) => Task.Run(() => del(input, context), cancel));
+        }
+
+        public static IInputRunResultChainBuilder<T, T, TResult, DelegateRunResultChainLink<T, TResult>> StartWithInputInto<T, TResult>(Func<T, IChainLinkRunContext, Task<TResult>> del)
+        {
+            return StartWithInputInto<T, TResult>((input, context, _) => del(input, context));
+        }
+
+        public static IInputRunResultChainBuilder<T, T, TResult, DelegateRunResultChainLink<T, TResult>> StartWithInputInto<T, TResult>(Func<T, IChainLinkRunContext, CancellationToken, TResult> del)
+        {
+            return StartWithInputInto<T, TResult>((input, context, cancel) => Task.Run(() => del(input, context, cancel), cancel));
+        }
+
+        public static IInputRunResultChainBuilder<T, T, TResult, DelegateRunResultChainLink<T, TResult>> StartWithInputInto<T, TResult>(Func<T, IChainLinkRunContext, CancellationToken, Task<TResult>> del)
+        {
+            return new InputDelegateRunResultChainBuilder<T, T, TResult, DelegateRunResultChainLink<T, TResult>>(del);
         }
 
         public static IRunChainBuilder<DelegateRunChainLink> StartWith(Action del)
@@ -91,21 +130,13 @@ namespace ChainLink.ChainBuilders
         public IRunChainBuilder<TChainLink> Run<TChainLink>(params object[] args)
             where TChainLink : IRunChainLink
         {
-            var child = new RunChainBuilder<TChainLink>(args, this);
-
-            Children.Add(child);
-
-            return child;
+            return AddChildChainBuilder(new RunChainBuilder<TChainLink>(args, this));
         }
 
         public IRunResultChainBuilder<T, TChainLink> Run<T, TChainLink>(params object[] args)
             where TChainLink : IRunChainLink, IResultChainLink<T>
         {
-            var child = new RunResultChainBuilder<T, TChainLink>(args, this);
-
-            Children.Add(child);
-
-            return child;
+            return AddChildChainBuilder(new RunResultChainBuilder<T, TChainLink>(args, this));
         }
 
         public IRunChainBuilder<DelegateRunChainLink> Run(Action del)
@@ -175,15 +206,6 @@ namespace ChainLink.ChainBuilders
         }
 
         public abstract IChainLinkRunner CreateChainLinkRunner();
-
-        protected TChainLink CreateChainLink<TChainLink>()
-        {
-            if (ChainLinkArgs.Length == 0)
-                return Activator.CreateInstance<TChainLink>();
-
-            ConstructorInfo constructorInfo = ChainLinkType.GetConstructor(ChainLinkArgs.Select(arg => arg.GetType()).ToArray());
-            return (TChainLink)constructorInfo.Invoke(ChainLinkArgs);
-        }
 
         protected TChainBuilder AddChildChainBuilder<TChainBuilder>(TChainBuilder child)
             where TChainBuilder : IChainBuilder

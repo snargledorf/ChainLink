@@ -102,5 +102,39 @@ namespace ChainLink.Tests
             Assert.AreEqual(Expected, trimmedString);
             Assert.AreEqual(Expected, helloWorld);
         }
+
+        [TestMethod]
+        public async Task RunChainWithArgs()
+        {
+            const string Expected = "Hello World";
+
+            string? trimmedString = null;
+
+            IChain<string> chain = ChainBuilder
+                .StartWithInputInto<string, string?, TrimInputStringLink>()
+                .RunWithResult(input => trimmedString = input)
+                .Build();
+
+            await chain.RunAsync(" Hello World ");
+
+            Assert.AreEqual(Expected, trimmedString);
+        }
+
+        [TestMethod]
+        public async Task RunChainWithArgsIntoDelegate()
+        {
+            const string Expected = "Hello World";
+
+            string? trimmedString = null;
+
+            IChain<string> chain = ChainBuilder
+                .StartWithInputInto<string, string>((input) => input.Trim())
+                .RunWithResult(input => trimmedString = input)
+                .Build();
+
+            await chain.RunAsync(" Hello World ");
+
+            Assert.AreEqual(Expected, trimmedString);
+        }
     }
 }

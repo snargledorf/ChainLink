@@ -12,7 +12,7 @@ namespace ChainLink.ChainBuilders
 
         public override IChainLinkRunner CreateChainLinkRunner()
         {
-            return new RunChainLinkRunner(CreateChainLink<TChainLink>(), Children.Select(c => c.CreateChainLinkRunner()));
+            return new RunChainLinkRunner(ReflectionUtils.CreateObject<TChainLink>(ChainLinkArgs), Children.Select(c => c.CreateChainLinkRunner()));
         }
     }
 
@@ -26,7 +26,7 @@ namespace ChainLink.ChainBuilders
 
         public override IChainLinkRunner CreateChainLinkRunner()
         {
-            return new RunChainLinkRunner<T>(CreateChainLink<TChainLink>(), Children.Select(c => c.CreateChainLinkRunner()));
+            return new RunChainLinkRunner<T>(ReflectionUtils.CreateObject<TChainLink>(ChainLinkArgs), Children.Select(c => c.CreateChainLinkRunner()));
         }
     }
 }

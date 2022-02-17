@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace ChainLink
 {
-    internal class Chain : IChain
+    internal sealed class Chain : IChain
     {
         private readonly IRunChainLinkRunner chainLinkRunner;
 
@@ -16,6 +16,21 @@ namespace ChainLink
         {
             var context = new ChainLinkRunContext();
             return chainLinkRunner.RunAsync(context, cancellationToken);
+        }
+    }
+    internal sealed class Chain<T> : IChain<T>
+    {
+        private readonly IRunChainLinkRunner<T> chainLinkRunner;
+
+        public Chain(IRunChainLinkRunner<T> chainLinkRunner)
+        {
+            this.chainLinkRunner = chainLinkRunner;
+        }
+
+        public Task RunAsync(T input, CancellationToken cancellationToken = default)
+        {
+            var context = new ChainLinkRunContext();
+            return chainLinkRunner.RunAsync(input, context, cancellationToken);
         }
     }
 }

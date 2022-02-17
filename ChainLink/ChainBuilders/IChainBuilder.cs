@@ -6,10 +6,6 @@ namespace ChainLink.ChainBuilders
 {
     public interface IChainBuilder
     {
-        Type ChainLinkType { get; }
-
-        object[] ChainLinkArgs { get; }
-
         IChainBuilder Root { get; }
 
         IChainBuilder Previous { get; }
