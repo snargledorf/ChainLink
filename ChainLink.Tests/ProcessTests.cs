@@ -141,5 +141,24 @@ namespace ChainLink.Tests
 
             Assert.AreEqual(Expected, trimmedString);
         }
+
+        [TestMethod]
+        public async Task InstantiateChainLinks()
+        {
+            const string Expected = "Hello World";
+
+            string? trimmedString = null;
+
+            IChain<string> chain = new Chain<string>(configure =>
+            {
+                configure
+                    .StartWithInputInto<string?, TrimInputStringLink>(new TrimInputStringLink())
+                    .RunWithResult(input => trimmedString = input);
+            });
+
+            await chain.RunAsync(" Hello World ");
+
+            Assert.AreEqual(Expected, trimmedString);
+        }
     }
 }

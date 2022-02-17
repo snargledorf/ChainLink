@@ -1,25 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace ChainLink.ChainBuilders
 {
-    public abstract class ChainBuilder : IChainBuilder
+    internal abstract class ChainBuilderBase<TChainLink> : ChainBuilderBase
     {
-        protected ChainBuilder(object[] chainLinkArgs, ChainBuilder previous = null)
+        protected ChainBuilderBase(object[] chainLinkArgs, ChainBuilderBase previous = null)
+            : this(ReflectionUtils.CreateObject<TChainLink>(chainLinkArgs), previous)
         {
-            ChainLinkArgs = chainLinkArgs;
+        }
+
+        protected ChainBuilderBase(TChainLink chainLink, ChainBuilderBase previous = null)
+            : base(previous)
+        {
+            ChainLink = chainLink;
+        }
+
+        public TChainLink ChainLink { get; }
+    }
+
+    internal abstract class ChainBuilderBase : IChainBuilder
+    {
+        protected ChainBuilderBase(ChainBuilderBase previous = null)
+        {
             Previous = previous;
         }
 
-        private ChainBuilder Root => Previous?.Root ?? this;
+        private ChainBuilderBase Root => Previous?.Root ?? this;
 
-        private ChainBuilder Previous { get; }
-
-        protected object[] ChainLinkArgs { get; }
+        private ChainBuilderBase Previous { get; }
 
         protected List<IChainBuilder> Children { get; } = new List<IChainBuilder>();
 

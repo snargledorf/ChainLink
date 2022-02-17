@@ -16,6 +16,16 @@ namespace ChainLink.ChainBuilders
         public abstract IRunChainBuilder<TChainLink> StartWith<TChainLink>(params object[] args) where TChainLink : IRunChainLink;
         public abstract IResultChainBuilder<T, TChainLink> StartWith<T, TChainLink>(params object[] args) where TChainLink : IResultChainLink<T>;
 
+        public IRunChainBuilder<TChainLink> StartWith<TChainLink>(TChainLink chainLink) where TChainLink : IRunChainLink
+        {
+            return SetRootBuilder(new RunChainBuilder<TChainLink>(chainLink));
+        }
+
+        public IResultChainBuilder<T, TChainLink> StartWith<T, TChainLink>(TChainLink chainLink) where TChainLink : IResultChainLink<T>
+        {
+            return SetRootBuilder(new ResultChainBuilder<T, TChainLink>(chainLink));
+        }
+
         public IRunChainBuilder<DelegateRunChainLink> StartWith(Action del)
         {
             return StartWith((_, c) => Task.Run(del, c));
@@ -108,10 +118,20 @@ namespace ChainLink.ChainBuilders
             return SetRootBuilder(new InputRunChainBuilder<T, T, TChainLink>(args));
         }
 
+        public IInputRunChainBuilder<T, T, TChainLink> StartWithInputInto<TChainLink>(TChainLink chainLink) where TChainLink : IRunChainLink<T>
+        {
+            return SetRootBuilder(new InputRunChainBuilder<T, T, TChainLink>(chainLink));
+        }
+
         public IInputRunResultChainBuilder<T, T, TResult, TChainLink> StartWithInputInto<TResult, TChainLink>(params object[] args)
             where TChainLink : IRunChainLink<T>, IResultChainLink<TResult>
         {
             return SetRootBuilder(new InputRunResultChainBuilder<T, T, TResult, TChainLink>(args));
+        }
+
+        public IInputRunResultChainBuilder<T, T, TResult, TChainLink> StartWithInputInto<TResult, TChainLink>(TChainLink chainLink) where TChainLink : IRunChainLink<T>, IResultChainLink<TResult>
+        {
+            return SetRootBuilder(new InputRunResultChainBuilder<T, T, TResult, TChainLink>(chainLink));
         }
 
         public IInputRunResultChainBuilder<T, T, TResult, DelegateRunResultChainLink<T, TResult>> StartWithInputInto<TResult>(Func<T, TResult> del)

@@ -7,19 +7,32 @@ using System.Threading.Tasks;
 
 namespace ChainLink.ChainBuilders
 {
-    internal abstract class InputChainBuilder<T> : IInputChainBuilder<T>
+    internal abstract class InputChainBuilderBase<T, TChainLink> : InputChainBuilderBase<T>
     {
-        protected InputChainBuilder(object[] chainLinkArgs, InputChainBuilder<T> previous = null)
+        protected InputChainBuilderBase(object[] chainLinkArgs, InputChainBuilderBase<T> previous = null)
+            : this(ReflectionUtils.CreateObject<TChainLink>(chainLinkArgs), previous)
         {
-            ChainLinkArgs = chainLinkArgs;
+        }
+
+        protected InputChainBuilderBase(TChainLink chainLink, InputChainBuilderBase<T> previous = null)
+            : base(previous)
+        {
+            ChainLink = chainLink;
+        }
+
+        public TChainLink ChainLink { get; }
+    }
+
+    internal abstract class InputChainBuilderBase<T> : IInputChainBuilder<T>
+    {
+        protected InputChainBuilderBase(InputChainBuilderBase<T> previous = null)
+        {
             Previous = previous;
         }
 
-        public InputChainBuilder<T> Root => Previous?.Root ?? this;
+        public InputChainBuilderBase<T> Root => Previous?.Root ?? this;
 
-        public InputChainBuilder<T> Previous { get; }
-
-        protected object[] ChainLinkArgs { get; }
+        public InputChainBuilderBase<T> Previous { get; }
 
         protected List<IInputChainBuilder<T>> Children { get; } = new List<IInputChainBuilder<T>>();
 

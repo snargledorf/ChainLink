@@ -8,7 +8,11 @@ namespace ChainLink.ChainBuilders
     {
         IRunChainBuilder<TChainLink> StartWith<TChainLink>(params object[] args)
             where TChainLink : IRunChainLink;
+        IRunChainBuilder<TChainLink> StartWith<TChainLink>(TChainLink chainLink)
+            where TChainLink : IRunChainLink;
         IResultChainBuilder<T, TChainLink> StartWith<T, TChainLink>(params object[] args)
+            where TChainLink : IResultChainLink<T>;
+        IResultChainBuilder<T, TChainLink> StartWith<T, TChainLink>(TChainLink chainLink)
             where TChainLink : IResultChainLink<T>;
         IRunChainBuilder<DelegateRunChainLink> StartWith(Action del);
 
@@ -34,7 +38,11 @@ namespace ChainLink.ChainBuilders
     {
         IInputRunChainBuilder<T, T, TChainLink> StartWithInputInto<TChainLink>(params object[] args)
             where TChainLink : IRunChainLink<T>;
+        IInputRunChainBuilder<T, T, TChainLink> StartWithInputInto<TChainLink>(TChainLink chainLink)
+            where TChainLink : IRunChainLink<T>;
         IInputRunResultChainBuilder<T, T, TResult, TChainLink> StartWithInputInto<TResult, TChainLink>(params object[] args)
+            where TChainLink : IRunChainLink<T>, IResultChainLink<TResult>;
+        IInputRunResultChainBuilder<T, T, TResult, TChainLink> StartWithInputInto<TResult, TChainLink>(TChainLink chainLink)
             where TChainLink : IRunChainLink<T>, IResultChainLink<TResult>;
         IInputRunResultChainBuilder<T, T, TResult, DelegateRunResultChainLink<T, TResult>> StartWithInputInto<TResult>(Func<T, TResult> del);
 

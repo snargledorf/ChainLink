@@ -5,12 +5,22 @@ using System.Threading.Tasks;
 
 namespace ChainLink.ChainBuilders
 {
-    internal class InputResultChainBuilder<T, TResult, TChainLink> : InputChainBuilder<T>, IInputResultChainBuilder<T, TResult, TChainLink>
+    internal class InputResultChainBuilder<T, TResult, TChainLink> : InputChainBuilderBase<T, TChainLink>, IInputResultChainBuilder<T, TResult, TChainLink>
         where TChainLink : IResultChainLink<TResult>
     {
-        public InputResultChainBuilder(object[] chainLinkArgs, InputChainBuilder<T> previous = null)
+        public InputResultChainBuilder(object[] chainLinkArgs, InputChainBuilderBase<T> previous = null) 
             : base(chainLinkArgs, previous)
         {
+        }
+
+        public InputResultChainBuilder(TChainLink chainLink, InputChainBuilderBase<T> previous = null) 
+            : base(chainLink, previous)
+        {
+        }
+
+        public override IChainLinkRunner CreateChainLinkRunner()
+        {
+            return new ResultChainLinkRunner<TResult>(ChainLink, Children.Select(c => c.CreateChainLinkRunner()).ToArray());
         }
 
         public IInputRunChainBuilder<T, TResult, TNewChainLink> RunWithResult<TNewChainLink>(params object[] args)
@@ -23,11 +33,6 @@ namespace ChainLink.ChainBuilders
             where TNewChainLink : IRunChainLink<TResult>, IResultChainLink<TNewResult>
         {
             return AddChildChainBuilder(new InputRunResultChainBuilder<T, TResult, TNewResult, TNewChainLink>(args, this));
-        }
-
-        public override IChainLinkRunner CreateChainLinkRunner()
-        {
-            return new ResultChainLinkRunner<TResult>(ReflectionUtils.CreateObject<TChainLink>(ChainLinkArgs), Children.Select(c => c.CreateChainLinkRunner()).ToArray());
         }
 
         public IInputRunChainBuilder<T, TResult, DelegateRunChainLink<TResult>> RunWithResult(Action<TResult> del)

@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 
 namespace ChainLink.ChainBuilders
 {
-    internal class DelegateRunChainBuilder : ChainBuilder, IRunChainBuilder<DelegateRunChainLink>
+    internal class DelegateRunChainBuilder : ChainBuilderBase, IRunChainBuilder<DelegateRunChainLink>
     {
         private readonly Func<IChainLinkRunContext, CancellationToken, Task> del;
 
-        public DelegateRunChainBuilder(Func<IChainLinkRunContext, CancellationToken, Task> del, ChainBuilder previous = null)
-            : base(Array.Empty<object>(), previous)
+        public DelegateRunChainBuilder(Func<IChainLinkRunContext, CancellationToken, Task> del, ChainBuilderBase previous = null)
+            : base(previous)
         {
             this.del = del;
         }
@@ -20,12 +20,12 @@ namespace ChainLink.ChainBuilders
             return new RunChainLinkRunner(new DelegateRunChainLink(del), Children.Select(c => c.CreateChainLinkRunner()).ToArray());
         }
     }
-    internal class DelegateRunChainBuilder<T> : ChainBuilder, IRunChainBuilder<T, DelegateRunChainLink<T>>
+    internal class DelegateRunChainBuilder<T> : ChainBuilderBase, IRunChainBuilder<T, DelegateRunChainLink<T>>
     {
         private readonly Func<T, IChainLinkRunContext, CancellationToken, Task> del;
 
-        public DelegateRunChainBuilder(Func<T, IChainLinkRunContext, CancellationToken, Task> del, ChainBuilder previous = null)
-            : base(Array.Empty<object>(), previous)
+        public DelegateRunChainBuilder(Func<T, IChainLinkRunContext, CancellationToken, Task> del, ChainBuilderBase previous = null)
+            : base(previous)
         {
             this.del = del;
         }
@@ -36,12 +36,12 @@ namespace ChainLink.ChainBuilders
         }
     }
 
-    internal class DelegateRunResultChainBuilder<T> : ChainBuilder, IRunResultChainBuilder<T, DelegateRunResultChainLink<T>>
+    internal class DelegateRunResultChainBuilder<T> : ChainBuilderBase, IRunResultChainBuilder<T, DelegateRunResultChainLink<T>>
     {
         private readonly Func<IChainLinkRunContext, CancellationToken, Task<T>> del;
 
-        public DelegateRunResultChainBuilder(Func<IChainLinkRunContext, CancellationToken, Task<T>> del, ChainBuilder previous = null)
-            : base(Array.Empty<object>(), previous)
+        public DelegateRunResultChainBuilder(Func<IChainLinkRunContext, CancellationToken, Task<T>> del, ChainBuilderBase previous = null)
+            : base(previous)
         {
             this.del = del;
         }
@@ -114,13 +114,13 @@ namespace ChainLink.ChainBuilders
         }
     }
 
-    internal class DelegateRunResultChainBuilder<TInput, TResult, TChainLink> : ChainBuilder, IRunResultChainBuilder<TInput, TResult, DelegateRunResultChainLink<TInput, TResult>>
+    internal class DelegateRunResultChainBuilder<TInput, TResult, TChainLink> : ChainBuilderBase, IRunResultChainBuilder<TInput, TResult, DelegateRunResultChainLink<TInput, TResult>>
         where TChainLink : IRunChainLink<TInput>, IResultChainLink<TResult>
     {
         private readonly Func<TInput, IChainLinkRunContext, CancellationToken, Task<TResult>> del;
 
-        public DelegateRunResultChainBuilder(Func<TInput, IChainLinkRunContext, CancellationToken, Task<TResult>> del, ChainBuilder previous = null)
-            : base(Array.Empty<object>(), previous)
+        public DelegateRunResultChainBuilder(Func<TInput, IChainLinkRunContext, CancellationToken, Task<TResult>> del, ChainBuilderBase previous = null)
+            : base(previous)
         {
             this.del = del;
         }

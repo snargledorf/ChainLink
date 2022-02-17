@@ -2,31 +2,41 @@
 
 namespace ChainLink.ChainBuilders
 {
-    public class RunChainBuilder<TChainLink> : ChainBuilder, IRunChainBuilder<TChainLink>
+    internal class RunChainBuilder<TChainLink> : ChainBuilderBase<TChainLink>, IRunChainBuilder<TChainLink>
         where TChainLink : IRunChainLink
     {
-        internal RunChainBuilder(object[] chainLinkArgs, ChainBuilder previous = null)
+        public RunChainBuilder(object[] chainLinkArgs, ChainBuilderBase previous = null)
             : base(chainLinkArgs, previous)
+        {
+        }
+
+        public RunChainBuilder(TChainLink chainLink, ChainBuilderBase previous = null)
+            : base(chainLink, previous)
         {
         }
 
         public override IChainLinkRunner CreateChainLinkRunner()
         {
-            return new RunChainLinkRunner(ReflectionUtils.CreateObject<TChainLink>(ChainLinkArgs), Children.Select(c => c.CreateChainLinkRunner()).ToArray());
+            return new RunChainLinkRunner(ChainLink, Children.Select(c => c.CreateChainLinkRunner()).ToArray());
         }
     }
 
-    public class RunChainBuilder<T, TChainLink> : ChainBuilder, IRunChainBuilder<T, TChainLink>
+    internal class RunChainBuilder<T, TChainLink> : ChainBuilderBase<TChainLink>, IRunChainBuilder<T, TChainLink>
         where TChainLink : IRunChainLink<T>
     {
-        public RunChainBuilder(object[] chainLinkArgs, ChainBuilder previous)
+        public RunChainBuilder(object[] chainLinkArgs, ChainBuilderBase previous = null)
             : base(chainLinkArgs, previous)
+        {
+        }
+
+        public RunChainBuilder(TChainLink chainLink, ChainBuilderBase previous = null)
+            : base(chainLink, previous)
         {
         }
 
         public override IChainLinkRunner CreateChainLinkRunner()
         {
-            return new RunChainLinkRunner<T>(ReflectionUtils.CreateObject<TChainLink>(ChainLinkArgs), Children.Select(c => c.CreateChainLinkRunner()).ToArray());
+            return new RunChainLinkRunner<T>(ChainLink, Children.Select(c => c.CreateChainLinkRunner()).ToArray());
         }
     }
 }
