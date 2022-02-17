@@ -8,7 +8,7 @@ namespace ChainLink.ChainBuilders
     internal class InputRunResultChainBuilder<T, TInput, TChainLink> : InputChainBuilder<T>, IInputRunResultChainBuilder<T, TInput, TChainLink>
         where TChainLink : IRunChainLink, IResultChainLink<TInput>
     {
-        internal InputRunResultChainBuilder(object[] chainLinkArgs, IInputChainBuilder<T> previous)
+        internal InputRunResultChainBuilder(object[] chainLinkArgs, InputChainBuilder<T> previous)
             : base(chainLinkArgs, previous)
         {
         }
@@ -86,7 +86,7 @@ namespace ChainLink.ChainBuilders
     internal class InputRunResultChainBuilder<T, TInput, TResult, TChainLink> : InputChainBuilder<T>, IInputRunResultChainBuilder<T, TInput, TResult, TChainLink>
         where TChainLink : IRunChainLink<TInput>, IResultChainLink<TResult>
     {
-        internal InputRunResultChainBuilder(object[] chainLinkArgs, IInputChainBuilder<T> previous = null)
+        internal InputRunResultChainBuilder(object[] chainLinkArgs, InputChainBuilder<T> previous = null)
             : base(chainLinkArgs, previous)
         {
         }

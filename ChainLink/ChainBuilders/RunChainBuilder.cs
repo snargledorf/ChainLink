@@ -5,7 +5,7 @@ namespace ChainLink.ChainBuilders
     public class RunChainBuilder<TChainLink> : ChainBuilder, IRunChainBuilder<TChainLink>
         where TChainLink : IRunChainLink
     {
-        internal RunChainBuilder(object[] chainLinkArgs, IChainBuilder previous = null)
+        internal RunChainBuilder(object[] chainLinkArgs, ChainBuilder previous = null)
             : base(chainLinkArgs, previous)
         {
         }
@@ -19,7 +19,7 @@ namespace ChainLink.ChainBuilders
     public class RunChainBuilder<T, TChainLink> : ChainBuilder, IRunChainBuilder<T, TChainLink>
         where TChainLink : IRunChainLink<T>
     {
-        public RunChainBuilder(object[] chainLinkArgs, IChainBuilder previous)
+        public RunChainBuilder(object[] chainLinkArgs, ChainBuilder previous)
             : base(chainLinkArgs, previous)
         {
         }

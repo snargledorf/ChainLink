@@ -9,7 +9,7 @@ namespace ChainLink.ChainBuilders
     {
         private readonly Func<IChainLinkRunContext, CancellationToken, Task> del;
 
-        public DelegateRunChainBuilder(Func<IChainLinkRunContext, CancellationToken, Task> del, IChainBuilder previous = null)
+        public DelegateRunChainBuilder(Func<IChainLinkRunContext, CancellationToken, Task> del, ChainBuilder previous = null)
             : base(Array.Empty<object>(), previous)
         {
             this.del = del;
@@ -24,7 +24,7 @@ namespace ChainLink.ChainBuilders
     {
         private readonly Func<T, IChainLinkRunContext, CancellationToken, Task> del;
 
-        public DelegateRunChainBuilder(Func<T, IChainLinkRunContext, CancellationToken, Task> del, IChainBuilder previous = null)
+        public DelegateRunChainBuilder(Func<T, IChainLinkRunContext, CancellationToken, Task> del, ChainBuilder previous = null)
             : base(Array.Empty<object>(), previous)
         {
             this.del = del;
@@ -40,7 +40,7 @@ namespace ChainLink.ChainBuilders
     {
         private readonly Func<IChainLinkRunContext, CancellationToken, Task<T>> del;
 
-        public DelegateRunResultChainBuilder(Func<IChainLinkRunContext, CancellationToken, Task<T>> del, IChainBuilder previous = null)
+        public DelegateRunResultChainBuilder(Func<IChainLinkRunContext, CancellationToken, Task<T>> del, ChainBuilder previous = null)
             : base(Array.Empty<object>(), previous)
         {
             this.del = del;
@@ -119,7 +119,7 @@ namespace ChainLink.ChainBuilders
     {
         private readonly Func<TInput, IChainLinkRunContext, CancellationToken, Task<TResult>> del;
 
-        public DelegateRunResultChainBuilder(Func<TInput, IChainLinkRunContext, CancellationToken, Task<TResult>> del, IChainBuilder previous = null)
+        public DelegateRunResultChainBuilder(Func<TInput, IChainLinkRunContext, CancellationToken, Task<TResult>> del, ChainBuilder previous = null)
             : base(Array.Empty<object>(), previous)
         {
             this.del = del;

@@ -1,15 +1,20 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
+
+using ChainLink.ChainBuilders;
 
 namespace ChainLink
 {
-    internal sealed class Chain : IChain
+    public sealed class Chain : IChain
     {
         private readonly IRunChainLinkRunner chainLinkRunner;
 
-        public Chain(IChainLinkRunner chainLinkRunner)
+        public Chain(Action<IStartChainBuilder> configure)
         {
-            this.chainLinkRunner = (IRunChainLinkRunner)chainLinkRunner;
+            var builder = new StartChainBuilder();
+            configure(builder);
+            chainLinkRunner = builder.Build();
         }
 
         public Task RunAsync(CancellationToken cancellationToken = default)
@@ -18,13 +23,16 @@ namespace ChainLink
             return chainLinkRunner.RunAsync(context, cancellationToken);
         }
     }
-    internal sealed class Chain<T> : IChain<T>
+    
+    public sealed class Chain<T> : IChain<T>
     {
         private readonly IRunChainLinkRunner<T> chainLinkRunner;
 
-        public Chain(IRunChainLinkRunner<T> chainLinkRunner)
+        public Chain(Action<IStartChainBuilder<T>> configure)
         {
-            this.chainLinkRunner = chainLinkRunner;
+            var builder = new StartChainBuilder<T>();
+            configure(builder);
+            chainLinkRunner = builder.Build();
         }
 
         public Task RunAsync(T input, CancellationToken cancellationToken = default)

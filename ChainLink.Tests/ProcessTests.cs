@@ -1,7 +1,5 @@
 using System.Threading.Tasks;
 
-using ChainLink.ChainBuilders;
-
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ChainLink.Tests
@@ -12,9 +10,7 @@ namespace ChainLink.Tests
         [TestMethod]
         public async Task HelloWorldChain()
         {
-            IChain chain = ChainBuilder
-                .StartWith<string, HelloWorldLink>()
-                .Build();
+            IChain chain = new Chain(configure => configure.StartWith<string, HelloWorldLink>());
 
             await chain.RunAsync();
         }
@@ -22,9 +18,7 @@ namespace ChainLink.Tests
         [TestMethod]
         public async Task ChainLinkArgs()
         {
-            IChain chain = ChainBuilder
-                .StartWith<string, ReturnArgumentLink>("Hello World")
-                .Build();
+            IChain chain = new Chain(configure => configure.StartWith<string, ReturnArgumentLink>("Hello World"));
 
             await chain.RunAsync();
         }
@@ -32,10 +26,13 @@ namespace ChainLink.Tests
         [TestMethod]
         public async Task CreateMultiLinkChain()
         {
-            IChain chain = ChainBuilder
-                .StartWith<string, ReturnArgumentLink>(" Hello World ")
-                .RunWithResult<string?, TrimInputStringLink>()
-                .Build();
+            IChain chain = new Chain(
+                configure =>
+                {
+                    configure
+                        .StartWith<string, ReturnArgumentLink>(" Hello World ")
+                        .RunWithResult<string?, TrimInputStringLink>();
+                });
 
             await chain.RunAsync();
         }
@@ -43,10 +40,12 @@ namespace ChainLink.Tests
         [TestMethod]
         public async Task CreateChainWithContextVariables()
         {
-            IChain chain = ChainBuilder
-                .StartWith<SetContextVariableLink>(" Hello World ")
-                .Run<string?, TrimContextVariableStringLink>()
-                .Build();
+            IChain chain = new Chain(configure =>
+            {
+                configure
+                    .StartWith<SetContextVariableLink>(" Hello World ")
+                    .Run<string?, TrimContextVariableStringLink>();
+            });
 
             await chain.RunAsync();
         }
@@ -54,10 +53,12 @@ namespace ChainLink.Tests
         [TestMethod]
         public async Task CreateChainWhereResultIsIgnored()
         {
-            IChain chain = ChainBuilder
-                .StartWith<string, HelloWorldLink>()
-                .GetResult<string, HelloWorldLink>()
-                .Build();
+            IChain chain = new Chain(configure =>
+            {
+                configure
+                    .StartWith<string, HelloWorldLink>()
+                    .GetResult<string, HelloWorldLink>();
+            });
 
             await chain.RunAsync();
         }
@@ -65,14 +66,14 @@ namespace ChainLink.Tests
         [TestMethod]
         public async Task CreateChainWithMultipleBranches()
         {
-            var helloWorldResult = ChainBuilder
-                .StartWith<string, HelloWorldLink>();
+            var chain = new Chain(configure =>
+            {
+                var helloWorldResult = configure.StartWith<string, HelloWorldLink>();
 
-            helloWorldResult.RunWithResult<TrimInputStringLink>();
-            helloWorldResult.GetResult<string, HelloWorldLink>();
-
-            IChain chain = helloWorldResult.Build();
-
+                helloWorldResult.RunWithResult<TrimInputStringLink>();
+                helloWorldResult.GetResult<string, HelloWorldLink>();
+            });
+            
             await chain.RunAsync();
         }
 
@@ -81,21 +82,21 @@ namespace ChainLink.Tests
         {
             const string Expected = "Hello World";
 
-            var helloWorldResult = ChainBuilder
-                .StartWith(() => " Hello World ");
-
             string? trimmedString = null;
             string? helloWorld = null;
 
-            helloWorldResult
-                .RunWithResult<string?, TrimInputStringLink>()
-                .RunWithResult(input => trimmedString = input);
+            IChain chain = new Chain(configure =>
+            {
+                var helloWorldResult = configure.StartWith(() => " Hello World ");
 
-            helloWorldResult
-                .GetResult<string, HelloWorldLink>()
-                .RunWithResult(input => helloWorld = input);
+                helloWorldResult
+                    .RunWithResult<string?, TrimInputStringLink>()
+                    .RunWithResult(input => trimmedString = input);
 
-            IChain chain = helloWorldResult.Build();
+                helloWorldResult
+                    .GetResult<string, HelloWorldLink>()
+                    .RunWithResult(input => helloWorld = input);
+            });
 
             await chain.RunAsync();
 
@@ -110,10 +111,12 @@ namespace ChainLink.Tests
 
             string? trimmedString = null;
 
-            IChain<string> chain = ChainBuilder
-                .StartWithInputInto<string, string?, TrimInputStringLink>()
-                .RunWithResult(input => trimmedString = input)
-                .Build();
+            IChain<string> chain = new Chain<string>(configure =>
+            {
+                configure
+                    .StartWithInputInto<string?, TrimInputStringLink>()
+                    .RunWithResult(input => trimmedString = input);
+            });
 
             await chain.RunAsync(" Hello World ");
 
@@ -127,59 +130,16 @@ namespace ChainLink.Tests
 
             string? trimmedString = null;
 
-            IChain<string> chain = ChainBuilder
-                .StartWithInputInto<string, string>((input) => input.Trim())
-                .RunWithResult(input => trimmedString = input)
-                .Build();
+            IChain<string> chain = new Chain<string>(configure =>
+            {
+                configure
+                    .StartWithInputInto((input) => input.Trim())
+                    .RunWithResult(input => trimmedString = input);
+            });
 
             await chain.RunAsync(" Hello World ");
 
             Assert.AreEqual(Expected, trimmedString);
-        }
-
-        [TestMethod]
-        public async Task CreateChainWithDelegatesCallBuildOnAllBranches()
-        {
-            const string Expected = "Hello World";
-
-            var helloWorldResult = ChainBuilder
-                .StartWith(() => " Hello World ");
-
-            string? trimmedString = null;
-            string? helloWorld = null;
-
-            IChain chain1 = helloWorldResult
-                .RunWithResult<string?, TrimInputStringLink>()
-                .RunWithResult(input => trimmedString = input)
-                .Build();
-
-            IChain chain2 = helloWorldResult
-                .GetResult<string, HelloWorldLink>()
-                .RunWithResult(input => helloWorld = input)
-                .Build();
-
-            IChain chain3 = helloWorldResult.Build();
-
-            await chain1.RunAsync();
-
-            Assert.AreEqual(Expected, trimmedString);
-            Assert.IsNull(helloWorld);
-
-            trimmedString = null;
-            helloWorld = null;
-
-            await chain2.RunAsync();
-
-            Assert.AreEqual(Expected, trimmedString);
-            Assert.AreEqual(Expected, helloWorld);
-
-            trimmedString = null;
-            helloWorld = null;
-
-            await chain3.RunAsync();
-
-            Assert.AreEqual(Expected, trimmedString);
-            Assert.AreEqual(Expected, helloWorld);
         }
     }
 }

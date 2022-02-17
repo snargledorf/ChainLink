@@ -9,15 +9,15 @@ namespace ChainLink.ChainBuilders
 {
     internal abstract class InputChainBuilder<T> : IInputChainBuilder<T>
     {
-        protected InputChainBuilder(object[] chainLinkArgs, IInputChainBuilder<T> previous = null)
+        protected InputChainBuilder(object[] chainLinkArgs, InputChainBuilder<T> previous = null)
         {
             ChainLinkArgs = chainLinkArgs;
             Previous = previous;
         }
 
-        public IInputChainBuilder<T> Root => Previous?.Root ?? this;
+        public InputChainBuilder<T> Root => Previous?.Root ?? this;
 
-        public IInputChainBuilder<T> Previous { get; }
+        public InputChainBuilder<T> Previous { get; }
 
         protected object[] ChainLinkArgs { get; }
 
@@ -98,16 +98,6 @@ namespace ChainLink.ChainBuilders
         {
             Children.Add(child);
             return child;
-        }
-
-        public IChain<T> Build()
-        {
-            if (Root != this)
-                return Root.Build();
-
-            // I am root!
-
-            return new Chain<T>((IRunChainLinkRunner<T>)CreateChainLinkRunner());
         }
     }
 }

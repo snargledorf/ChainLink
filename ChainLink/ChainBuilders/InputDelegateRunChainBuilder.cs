@@ -9,7 +9,7 @@ namespace ChainLink.ChainBuilders
     {
         private readonly Func<IChainLinkRunContext, CancellationToken, Task> del;
 
-        public InputDelegateRunChainBuilder(Func<IChainLinkRunContext, CancellationToken, Task> del, IInputChainBuilder<T> previous = null)
+        public InputDelegateRunChainBuilder(Func<IChainLinkRunContext, CancellationToken, Task> del, InputChainBuilder<T> previous = null)
             : base(Array.Empty<object>(), previous)
         {
             this.del = del;
@@ -25,7 +25,7 @@ namespace ChainLink.ChainBuilders
     {
         private readonly Func<TInput, IChainLinkRunContext, CancellationToken, Task> del;
 
-        public InputDelegateRunChainBuilder(Func<TInput, IChainLinkRunContext, CancellationToken, Task> del, IInputChainBuilder<T> previous = null)
+        public InputDelegateRunChainBuilder(Func<TInput, IChainLinkRunContext, CancellationToken, Task> del, InputChainBuilder<T> previous = null)
             : base(Array.Empty<object>(), previous)
         {
             this.del = del;
@@ -41,7 +41,7 @@ namespace ChainLink.ChainBuilders
     {
         private readonly Func<IChainLinkRunContext, CancellationToken, Task<TResult>> del;
 
-        public InputDelegateRunResultChainBuilder(Func<IChainLinkRunContext, CancellationToken, Task<TResult>> del, IInputChainBuilder<T> previous = null)
+        public InputDelegateRunResultChainBuilder(Func<IChainLinkRunContext, CancellationToken, Task<TResult>> del, InputChainBuilder<T> previous = null)
             : base(Array.Empty<object>(), previous)
         {
             this.del = del;
@@ -121,7 +121,7 @@ namespace ChainLink.ChainBuilders
     {
         private readonly Func<TInput, IChainLinkRunContext, CancellationToken, Task<TResult>> del;
 
-        public InputDelegateRunResultChainBuilder(Func<TInput, IChainLinkRunContext, CancellationToken, Task<TResult>> del, IInputChainBuilder<T> previous = null)
+        public InputDelegateRunResultChainBuilder(Func<TInput, IChainLinkRunContext, CancellationToken, Task<TResult>> del, InputChainBuilder<T> previous = null)
             : base(Array.Empty<object>(), previous)
         {
             this.del = del;

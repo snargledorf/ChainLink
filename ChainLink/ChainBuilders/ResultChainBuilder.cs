@@ -8,7 +8,7 @@ namespace ChainLink.ChainBuilders
     public class ResultChainBuilder<T, TChainLink> : ChainBuilder, IResultChainBuilder<T, TChainLink>
         where TChainLink : IResultChainLink<T>
     {
-        public ResultChainBuilder(object[] chainLinkArgs, IChainBuilder previous = null)
+        public ResultChainBuilder(object[] chainLinkArgs, ChainBuilder previous = null)
             : base(chainLinkArgs, previous)
         {
         }

@@ -4,16 +4,8 @@ using System.Threading.Tasks;
 
 namespace ChainLink.ChainBuilders
 {
-    public interface IInputChainBuilder<T>
+    public interface IInputChainBuilder<T> : IChainLinkRunnerFactory
     {
-        IInputChainBuilder<T> Root { get; }
-
-        IInputChainBuilder<T> Previous { get; }
-
-        IChain<T> Build();
-
-        IChainLinkRunner CreateChainLinkRunner();
-
         IInputRunChainBuilder<T, TChainLink> Run<TChainLink>(params object[] args)
             where TChainLink : IRunChainLink;
         IInputRunResultChainBuilder<T, TResult, TChainLink> Run<TResult, TChainLink>(params object[] args)
