@@ -18,15 +18,15 @@ string? helloWorld = null;
 
 IChain chain = new Chain(configure =>
 {
-    var helloWorldResult = configure.StartWith(() => " Hello World ");
+    var helloWorldResult = configure.Run(() => " Hello World ");
 
     helloWorldResult
-        .RunWithResult<string?, TrimInputStringLink>()
-        .RunWithResult(input => trimmedString = input);
+        .RunWithInput<string?, TrimInputStringLink>()
+        .RunWithInput(input => trimmedString = input);
 
     helloWorldResult
         .GetResult<string, HelloWorldLink>()
-        .RunWithResult(input => helloWorld = input);
+        .RunWithInput(input => helloWorld = input);
 });
 
 await chain.RunAsync();
@@ -42,8 +42,8 @@ string? trimmedString = null;
 IChain<string> chain = new Chain<string>(configure =>
 {
     configure
-        .StartWithInputInto((input) => input.Trim())
-        .RunWithResult(input => trimmedString = input);
+        .RunWithInput((input) => input.Trim())
+        .RunWithInput(input => trimmedString = input);
 });
 
 await chain.RunAsync(" Hello World ");
