@@ -22,14 +22,4 @@ namespace ChainLink.ChainBuilders
             Result = input;
         }
     }
-
-    public sealed class RunChainLinkWrapperArgs
-    {
-        public RunChainLinkWrapperArgs(object[] args)
-        {
-            Args = args;
-        }
-
-        public object[] Args { get; }
-    }
 }

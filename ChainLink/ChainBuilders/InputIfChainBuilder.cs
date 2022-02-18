@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ChainLink.ChainBuilders
 {
-    public class InputIfChainBuilder<T> : InputChainBuilderBase<T>, IChainLinkRunnerFactory, IInputRunChainBuilder<T, IfChainLink>
+    public class InputIfChainBuilder<T> : InputChainBuilderBase<T>, IChainLinkRunnerFactory, IInputChainBuilder<T>
     {
         private readonly Func<IChainLinkRunContext, CancellationToken, Task<bool>> condition;
 
@@ -21,7 +21,7 @@ namespace ChainLink.ChainBuilders
         }
     }
 
-    public class InputIfChainBuilder<T, TInputResult> : InputRunResultChainBuilderBase<T, TInputResult, TInputResult, IfChainLink<TInputResult>>
+    public class InputIfChainBuilder<T, TInputResult> : InputChainRunWithInputResultChainBuilderBase<T, TInputResult, TInputResult, IfChainLink<TInputResult>>
     {
         private readonly Func<TInputResult, IChainLinkRunContext, CancellationToken, Task<bool>> condition;
 

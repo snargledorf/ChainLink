@@ -6,22 +6,23 @@ namespace ChainLink.ChainBuilders
 {
     public interface IChainBuilder
     {
-        IRunChainBuilder<TChainLink> Run<TChainLink>(params object[] args) where TChainLink : IRunChainLink;
-        IResultChainBuilder<T, TChainLink> Run<T, TChainLink>(params object[] args) where TChainLink : IRunChainLink, IResultChainLink<T>;
+        IChainBuilder Run<TChainLink>(params object[] args) where TChainLink : IRunChainLink;
+        IResultChainBuilder<T> Run<T, TChainLink>(params object[] args)
+            where TChainLink : IRunChainLink, IResultChainLink<T>;
 
-        IRunChainBuilder<DelegateRunChainLink> Run(Action del);
-        IRunChainBuilder<DelegateRunChainLink> Run(Func<Task> del);
-        IRunChainBuilder<DelegateRunChainLink> Run(Func<IChainLinkRunContext, Task> del);
-        IRunChainBuilder<DelegateRunChainLink> Run(Func<IChainLinkRunContext, CancellationToken, Task> del);
+        IChainBuilder Run(Action del);
+        IChainBuilder Run(Func<Task> del);
+        IChainBuilder Run(Func<IChainLinkRunContext, Task> del);
+        IChainBuilder Run(Func<IChainLinkRunContext, CancellationToken, Task> del);
 
-        IRunResultChainBuilder<T, DelegateRunResultChainLink<T>> Run<T>(Func<T> del);
-        IRunResultChainBuilder<T, DelegateRunResultChainLink<T>> Run<T>(Func<Task<T>> del);
-        IRunResultChainBuilder<T, DelegateRunResultChainLink<T>> Run<T>(Func<IChainLinkRunContext, T> del);
-        IRunResultChainBuilder<T, DelegateRunResultChainLink<T>> Run<T>(Func<IChainLinkRunContext, Task<T>> del);
-        IRunResultChainBuilder<T, DelegateRunResultChainLink<T>> Run<T>(Func<IChainLinkRunContext, CancellationToken, T> del);
-        IRunResultChainBuilder<T, DelegateRunResultChainLink<T>> Run<T>(Func<IChainLinkRunContext, CancellationToken, Task<T>> del);
+        IResultChainBuilder<T> Run<T>(Func<T> del);
+        IResultChainBuilder<T> Run<T>(Func<Task<T>> del);
+        IResultChainBuilder<T> Run<T>(Func<IChainLinkRunContext, T> del);
+        IResultChainBuilder<T> Run<T>(Func<IChainLinkRunContext, Task<T>> del);
+        IResultChainBuilder<T> Run<T>(Func<IChainLinkRunContext, CancellationToken, T> del);
+        IResultChainBuilder<T> Run<T>(Func<IChainLinkRunContext, CancellationToken, Task<T>> del);
 
-        IResultChainBuilder<T, TChainLink> GetResult<T, TChainLink>(params object[] args) where TChainLink : IResultChainLink<T>;
+        IResultChainBuilder<T> GetResult<T, TChainLink>(params object[] args) where TChainLink : IResultChainLink<T>;
 
         IChainBuilder If(Func<bool> condition);
         IChainBuilder If(Func<Task<bool>> condition);
@@ -31,67 +32,66 @@ namespace ChainLink.ChainBuilders
         IChainBuilder If(Func<IChainLinkRunContext, CancellationToken, Task<bool>> condition);
     }
 
-    public interface IRunChainBuilder<TChainLink> : IChainBuilder
-        where TChainLink : IRunChainLink
+    //public interface IRunChainBuilder<TChainLink> : IChainBuilder
+    //    where TChainLink : IRunChainLink
+    //{
+    //}
+
+    //public interface IRunChainBuilder<T, TChainLink> : IChainBuilder
+    //    where TChainLink : IRunChainLink<T>
+    //{
+    //}
+
+    public interface IResultChainBuilder<T> : IChainBuilder
     {
-    }
+        new IResultChainBuilder<T> Run<TNewChainLink>(params object[] args) where TNewChainLink : IRunChainLink;
 
-    public interface IRunChainBuilder<T, TChainLink> : IChainBuilder
-        where TChainLink : IRunChainLink<T>
-    {
-    }
+        IResultChainBuilder<T> RunWithInput<TNewChainLink>(params object[] args) where TNewChainLink : IRunChainLink<T>;
 
-    public interface IResultChainBuilder<T, TChainLink> : IChainBuilder
-        where TChainLink : IResultChainLink<T>
-    {
-        new IRunResultChainBuilder<T, T, RunChainLinkPassInputWrapper<T, TNewChainLink>> Run<TNewChainLink>(params object[] args) where TNewChainLink : IRunChainLink;
-
-        IRunChainBuilder<T, TNewChainLink> RunWithInput<TNewChainLink>(params object[] args) where TNewChainLink : IRunChainLink<T>;
-
-        IRunResultChainBuilder<T, TResult, TNewChainLink> RunWithInput<TResult, TNewChainLink>(params object[] args)
+        IResultChainBuilder<TResult> RunWithInput<TResult, TNewChainLink>(params object[] args)
             where TNewChainLink : IRunChainLink<T>, IResultChainLink<TResult>;
 
-        new IRunResultChainBuilder<T, T, DelegateRunChainLink<T>> Run(Action del);
-        new IRunResultChainBuilder<T, T, DelegateRunChainLink<T>> Run(Func<Task> del);
-        new IRunResultChainBuilder<T, T, DelegateRunChainLink<T>> Run(Func<IChainLinkRunContext, Task> del);
-        new IRunResultChainBuilder<T, T, DelegateRunChainLink<T>> Run(Func<IChainLinkRunContext, CancellationToken, Task> del);
+        new IResultChainBuilder<T> Run(Action del);
+        new IResultChainBuilder<T> Run(Func<Task> del);
+        new IResultChainBuilder<T> Run(Func<IChainLinkRunContext, Task> del);
+        new IResultChainBuilder<T> Run(Func<IChainLinkRunContext, CancellationToken, Task> del);
 
-        IRunResultChainBuilder<T, T, DelegateWithInputRunChainLink<T>> RunWithInput(Action<T> del);
-        IRunResultChainBuilder<T, T, DelegateWithInputRunChainLink<T>> RunWithInput(Func<T, Task> del);
-        IRunResultChainBuilder<T, T, DelegateWithInputRunChainLink<T>> RunWithInput(Func<T, IChainLinkRunContext, Task> del);
-        IRunResultChainBuilder<T, T, DelegateWithInputRunChainLink<T>> RunWithInput(Func<T, IChainLinkRunContext, CancellationToken, Task> del);
+        IResultChainBuilder<T> RunWithInput(Action<T> del);
+        IResultChainBuilder<T> RunWithInput(Func<T, Task> del);
+        IResultChainBuilder<T> RunWithInput(Func<T, IChainLinkRunContext, Task> del);
+        IResultChainBuilder<T> RunWithInput(Func<T, IChainLinkRunContext, CancellationToken, Task> del);
 
-        IRunResultChainBuilder<T, TResult, DelegateWithInputRunResultChainLink<T, TResult>> RunWithInput<TResult>(Func<T, TResult> del);
-        IRunResultChainBuilder<T, TResult, DelegateWithInputRunResultChainLink<T, TResult>> RunWithInput<TResult>(Func<T, Task<TResult>> del);
-        IRunResultChainBuilder<T, TResult, DelegateWithInputRunResultChainLink<T, TResult>> RunWithInput<TResult>(Func<T, IChainLinkRunContext, TResult> del);
-        IRunResultChainBuilder<T, TResult, DelegateWithInputRunResultChainLink<T, TResult>> RunWithInput<TResult>(Func<T, IChainLinkRunContext, Task<TResult>> del);
-        IRunResultChainBuilder<T, TResult, DelegateWithInputRunResultChainLink<T, TResult>> RunWithInput<TResult>(Func<T, IChainLinkRunContext, CancellationToken, TResult> del);
-        IRunResultChainBuilder<T, TResult, DelegateWithInputRunResultChainLink<T, TResult>> RunWithInput<TResult>(Func<T, IChainLinkRunContext, CancellationToken, Task<TResult>> del);
+        IResultChainBuilder<TResult> RunWithInput<TResult>(Func<T, TResult> del);
+        IResultChainBuilder<TResult> RunWithInput<TResult>(Func<T, Task<TResult>> del);
+        IResultChainBuilder<TResult> RunWithInput<TResult>(Func<T, IChainLinkRunContext, TResult> del);
+        IResultChainBuilder<TResult> RunWithInput<TResult>(Func<T, IChainLinkRunContext, Task<TResult>> del);
+        IResultChainBuilder<TResult> RunWithInput<TResult>(Func<T, IChainLinkRunContext, CancellationToken, TResult> del);
+        IResultChainBuilder<TResult> RunWithInput<TResult>(Func<T, IChainLinkRunContext, CancellationToken, Task<TResult>> del);
 
-        new IRunResultChainBuilder<T, T, IfChainLink<T>> If(Func<bool> condition);
-        new IRunResultChainBuilder<T, T, IfChainLink<T>> If(Func<Task<bool>> condition);
-        new IRunResultChainBuilder<T, T, IfChainLink<T>> If(Func<IChainLinkRunContext, bool> condition);
-        new IRunResultChainBuilder<T, T, IfChainLink<T>> If(Func<IChainLinkRunContext, Task<bool>> condition);
-        new IRunResultChainBuilder<T, T, IfChainLink<T>> If(Func<IChainLinkRunContext, CancellationToken, bool> condition);
-        new IRunResultChainBuilder<T, T, IfChainLink<T>> If(Func<IChainLinkRunContext, CancellationToken, Task<bool>> condition);
+        new IResultChainBuilder<T> If(Func<bool> condition);
+        new IResultChainBuilder<T> If(Func<Task<bool>> condition);
+        new IResultChainBuilder<T> If(Func<IChainLinkRunContext, bool> condition);
+        new IResultChainBuilder<T> If(Func<IChainLinkRunContext, Task<bool>> condition);
+        new IResultChainBuilder<T> If(Func<IChainLinkRunContext, CancellationToken, bool> condition);
+        new IResultChainBuilder<T> If(Func<IChainLinkRunContext, CancellationToken, Task<bool>> condition);
 
-        IRunResultChainBuilder<T, T, IfChainLink<T>> If(Func<T, bool> condition);
-        IRunResultChainBuilder<T, T, IfChainLink<T>> If(Func<T, Task<bool>> condition);
-        IRunResultChainBuilder<T, T, IfChainLink<T>> If(Func<T, IChainLinkRunContext, bool> condition);
-        IRunResultChainBuilder<T, T, IfChainLink<T>> If(Func<T, IChainLinkRunContext, Task<bool>> condition);
-        IRunResultChainBuilder<T, T, IfChainLink<T>> If(Func<T, IChainLinkRunContext, CancellationToken, bool> condition);
-        IRunResultChainBuilder<T, T, IfChainLink<T>> If(Func<T, IChainLinkRunContext, CancellationToken, Task<bool>> condition);
+        IResultChainBuilder<T> If(Func<T, bool> condition);
+        IResultChainBuilder<T> If(Func<T, Task<bool>> condition);
+        IResultChainBuilder<T> If(Func<T, IChainLinkRunContext, bool> condition);
+        IResultChainBuilder<T> If(Func<T, IChainLinkRunContext, Task<bool>> condition);
+        IResultChainBuilder<T> If(Func<T, IChainLinkRunContext, CancellationToken, bool> condition);
+        IResultChainBuilder<T> If(Func<T, IChainLinkRunContext, CancellationToken, Task<bool>> condition);
     }
 
-    public interface IRunResultChainBuilder<T, TChainLink>
-        : IChainBuilder, IRunChainBuilder<TChainLink>, IResultChainBuilder<T, TChainLink>
-        where TChainLink : IRunChainLink, IResultChainLink<T>
-    {
-    }
+    //public interface IRunResultChainBuilder<T, TChainLink>
+    //    : IChainBuilder, IRunChainBuilder<TChainLink>, IResultChainBuilder<T, TChainLink>
+    //    where TChainLink : IRunResultChainLink<T>
+    //{
+    //}
 
-    public interface IRunResultChainBuilder<TInput, TResult, TChainLink>
-        : IChainBuilder, IRunChainBuilder<TInput, TChainLink>, IResultChainBuilder<TResult, TChainLink>
-        where TChainLink : IRunChainLink<TInput>, IResultChainLink<TResult>
-    {
-    }
+    //public interface IRunResultChainBuilder<TInput, TResult, TChainLink>
+    //    : IChainBuilder, IRunChainBuilder<TInput, TChainLink>, IResultChainBuilder<TResult, TChainLink>
+    //    where TChainLink : IRunResultChainLink<TInput, TResult>
+    //{
+    //}
 }

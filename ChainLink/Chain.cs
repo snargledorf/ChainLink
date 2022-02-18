@@ -30,7 +30,7 @@ namespace ChainLink
     
     public sealed class Chain<T> : IChain<T>
     {
-        private readonly IEnumerable<IRunChainLinkRunner<T>> chainLinkRunners;
+        private readonly IEnumerable<IRunWithInputChainLinkRunner<T>> chainLinkRunners;
 
         public Chain(Action<IRootInputChainBuilder<T>> configure)
         {

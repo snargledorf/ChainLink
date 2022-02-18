@@ -1,6 +1,8 @@
 using System;
 using System.Threading.Tasks;
 
+using ChainLink.ChainBuilders;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ChainLink.Tests
@@ -32,7 +34,7 @@ namespace ChainLink.Tests
                 {
                     configure
                         .GetResult<string, ReturnArgumentLink>(" Hello World ")
-                        .RunWithInput<string?, TrimInputStringLink>();
+                        .RunWithInput<TrimInputStringLink>();
                 });
 
             await chain.RunAsync();
@@ -45,7 +47,7 @@ namespace ChainLink.Tests
             {
                 configure
                     .Run<SetContextVariableLink>(" Hello World ")
-                    .Run<string?, TrimContextVariableStringLink>();
+                    .Run<TrimContextVariableStringLink>();
             });
 
             await chain.RunAsync();
@@ -240,6 +242,45 @@ namespace ChainLink.Tests
                     .If((input) => input == "Hello World")
                     .If(() => true)
                     .RunWithInput(input => trimmedString = input);
+            });
+
+            await inputChain.RunAsync(" Hello World ");
+
+            Assert.AreEqual(Expected, trimmedString);
+        }
+
+        [TestMethod]
+        public async Task ReassignDelegateAndIfBuilders()
+        {
+            const string Expected = "Hello World";
+
+            string? trimmedString = null;
+
+            IChain chain = new Chain(configure =>
+            {
+                IResultChainBuilder<string> helloWorld = configure
+                    .Run(() => " Hello World ")
+                    .If((string input) => input != null);
+
+                helloWorld = helloWorld.RunWithInput(i => i.Trim());
+
+                helloWorld.RunWithInput(i => trimmedString = i);
+            });
+
+            await chain.RunAsync();
+
+            Assert.AreEqual(Expected, trimmedString);
+
+            trimmedString = null;
+
+            IChain<string> inputChain = new Chain<string>(configure =>
+            {
+                IInputResultChainBuilder<string, string> helloWorld = configure
+                    .If((string input) => input != null);
+
+                helloWorld = helloWorld.RunWithInput(i => i.Trim());
+
+                helloWorld.RunWithInput(i => trimmedString = i);
             });
 
             await inputChain.RunAsync(" Hello World ");

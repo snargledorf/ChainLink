@@ -21,17 +21,17 @@ namespace ChainLink.ChainBuilders
         }
     }
 
-    internal class DelegateWithInputRunResultChainBuilder<TInput, TResult, TChainLink> : RunResultChainBuilderBase<TInput, TResult, DelegateWithInputRunResultChainLink<TInput, TResult>>
+    internal class DelegateRunWithInputResultChainBuilder<TInput, TResult, TChainLink> : RunResultChainBuilderBase<TInput, TResult, TChainLink>
         where TChainLink : IRunChainLink<TInput>, IResultChainLink<TResult>
     {
-        public DelegateWithInputRunResultChainBuilder(Func<TInput, IChainLinkRunContext, CancellationToken, Task<TResult>> del, ChainBuilderBase previous = null)
+        public DelegateRunWithInputResultChainBuilder(Func<TInput, IChainLinkRunContext, CancellationToken, Task<TResult>> del, ChainBuilderBase previous = null)
             : base(new[] { del }, previous)
         {
         }
 
         public override IChainLinkRunner CreateChainLinkRunner()
         {
-            return new RunResultChainLinkRunner<TInput, TResult, DelegateWithInputRunResultChainLink<TInput, TResult>>(
+            return new RunWithInputResultChainLinkRunner<TInput, TResult, DelegateRunWithInputResultChainLink<TInput, TResult>>(
                 ChainLinkDescription,
                 Children.Select(c => c.CreateChainLinkRunner()).ToArray());
         }

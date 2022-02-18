@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ChainLink.ChainBuilders
 {
-    internal class InputDelegateRunResultChainBuilder<T, TResult> : InputRunResultChainBuilderBase<T, TResult, DelegateRunResultChainLink<TResult>>
+    internal class InputDelegateRunResultChainBuilder<T, TResult> : InputChainRunResultChainBuilderBase<T, TResult, DelegateRunResultChainLink<TResult>>
     {
         public InputDelegateRunResultChainBuilder(Func<IChainLinkRunContext, CancellationToken, Task<TResult>> del, InputChainBuilderBase<T> previous = null)
             : base(new[] { del }, previous)

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ChainLink.ChainBuilders
 {
-    internal class InputDelegateRunChainBuilder<T> : InputChainBuilderBase<T, DelegateRunChainLink>, IInputRunChainBuilder<T, DelegateRunChainLink>
+    internal class InputDelegateRunChainBuilder<T> : InputChainChainBuilderBase<T, DelegateRunChainLink>
     {
         public InputDelegateRunChainBuilder(Func<IChainLinkRunContext, CancellationToken, Task> del, InputChainBuilderBase<T> previous = null)
             : base(new[] { del }, previous)
@@ -18,16 +18,16 @@ namespace ChainLink.ChainBuilders
         }
     }
 
-    internal class InputDelegateRunChainBuilder<T, TInput> : InputRunResultChainBuilderBase<T, TInput, TInput, DelegateRunChainLink<TInput>>
+    internal class InputChainDelegateRunChainBuilder<T, TInput> : InputChainRunWithInputResultChainBuilderBase<T, TInput, TInput, DelegateRunChainLink<TInput>>
     {
-        public InputDelegateRunChainBuilder(Func<IChainLinkRunContext, CancellationToken, Task> del, InputChainBuilderBase<T> previous = null)
+        public InputChainDelegateRunChainBuilder(Func<IChainLinkRunContext, CancellationToken, Task> del, InputChainBuilderBase<T> previous = null)
             : base(new[] { del }, previous)
         {
         }
 
         public override IChainLinkRunner CreateChainLinkRunner()
         {
-            return new RunResultChainLinkRunner<TInput, TInput, DelegateRunChainLink<TInput>>(
+            return new RunWithInputResultChainLinkRunner<TInput, TInput, DelegateRunChainLink<TInput>>(
                 ChainLinkDescription,
                 Children.Select(c => c.CreateChainLinkRunner()).ToArray());
         }

@@ -12,7 +12,7 @@ namespace ChainLink.ChainBuilders
 
         public override IChainLinkRunner CreateChainLinkRunner()
         {
-            return new ResultChainLinkRunner<TResult>(ChainLinkDescription, Children.Select(c => c.CreateChainLinkRunner()).ToArray());
+            return new GetResultChainLinkRunner<TResult>(ChainLinkDescription, Children.Select(c => c.CreateChainLinkRunner()).ToArray());
         }
     }
 }

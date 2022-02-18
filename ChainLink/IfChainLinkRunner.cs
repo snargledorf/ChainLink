@@ -26,7 +26,7 @@ namespace ChainLink
         }
     }
 
-    internal class IfChainLinkRunner<T> : IRunChainLinkRunner<T>
+    internal class IfChainLinkRunner<T> : IRunWithInputChainLinkRunner<T>
     {
         private readonly Func<T, IChainLinkRunContext, CancellationToken, Task<bool>> condition;
         private readonly IEnumerable<IChainLinkRunner> childLinkRunners;
@@ -46,7 +46,7 @@ namespace ChainLink
             {
                 switch (child)
                 {
-                    case IRunChainLinkRunner<T> inputRunner:
+                    case IRunWithInputChainLinkRunner<T> inputRunner:
                         await inputRunner.RunAsync(input, context, cancellationToken);
                         break;
                     case IRunChainLinkRunner runner:

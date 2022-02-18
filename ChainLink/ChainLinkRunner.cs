@@ -10,7 +10,7 @@ namespace ChainLink
         Task RunAsync(IChainLinkRunContext context, CancellationToken cancellationToken = default);
     }
 
-    public interface IRunChainLinkRunner<T> : IChainLinkRunner
+    public interface IRunWithInputChainLinkRunner<T> : IChainLinkRunner
     {
         Task RunAsync(T input, IChainLinkRunContext context, CancellationToken cancellationToken = default);
     }
@@ -36,12 +36,12 @@ namespace ChainLink
         }
     }
 
-    internal class RunChainLinkRunner<T> : IRunChainLinkRunner<T>
+    internal class RunWithInputChainLinkRunner<T> : IRunWithInputChainLinkRunner<T>
     {
         private readonly ChainLinkDescription chainLinkDescription;
         private readonly IEnumerable<IChainLinkRunner> childLinkRunners;
 
-        public RunChainLinkRunner(ChainLinkDescription chainLinkDescription, IChainLinkRunner[] childLinkRunners)
+        public RunWithInputChainLinkRunner(ChainLinkDescription chainLinkDescription, IChainLinkRunner[] childLinkRunners)
         {
             this.chainLinkDescription = chainLinkDescription;
             this.childLinkRunners = childLinkRunners;
@@ -56,7 +56,7 @@ namespace ChainLink
             {
                 switch (child)
                 {
-                    case IRunChainLinkRunner<T> inputRunner:
+                    case IRunWithInputChainLinkRunner<T> inputRunner:
                         await inputRunner.RunAsync(input, context, cancellationToken);
                         break;
                     case IRunChainLinkRunner runner:
@@ -69,12 +69,12 @@ namespace ChainLink
         }
     }
 
-    internal class ResultChainLinkRunner<T> : IRunChainLinkRunner
+    internal class GetResultChainLinkRunner<T> : IRunChainLinkRunner
     {
         private readonly ChainLinkDescription chainLinkDescription;
         private readonly IEnumerable<IChainLinkRunner> childLinkRunners;
 
-        public ResultChainLinkRunner(ChainLinkDescription chainLinkDescription, IChainLinkRunner[] childLinkRunners)
+        public GetResultChainLinkRunner(ChainLinkDescription chainLinkDescription, IChainLinkRunner[] childLinkRunners)
         {
             this.chainLinkDescription = chainLinkDescription;
             this.childLinkRunners = childLinkRunners;
@@ -89,7 +89,7 @@ namespace ChainLink
             {
                 switch (child)
                 {
-                    case IRunChainLinkRunner<T> inputRunner:
+                    case IRunWithInputChainLinkRunner<T> inputRunner:
                         await inputRunner.RunAsync(result, context, cancellationToken);
                         break;
                     case IRunChainLinkRunner runner:
@@ -124,7 +124,7 @@ namespace ChainLink
             {
                 switch (child)
                 {
-                    case IRunChainLinkRunner<TResult> inputRunner:
+                    case IRunWithInputChainLinkRunner<TResult> inputRunner:
                         await inputRunner.RunAsync(result, context, cancellationToken);
                         break;
                     case IRunChainLinkRunner runner:
@@ -137,13 +137,13 @@ namespace ChainLink
         }
     }
 
-    internal class RunResultChainLinkRunner<TInput, TResult, TChainLink> : IRunChainLinkRunner<TInput>
+    internal class RunWithInputResultChainLinkRunner<TInput, TResult, TChainLink> : IRunWithInputChainLinkRunner<TInput>
         where TChainLink : IRunChainLink<TInput>, IResultChainLink<TResult>
     {
         private readonly ChainLinkDescription chainLinkDescription;
         private readonly IEnumerable<IChainLinkRunner> childLinkRunners;
 
-        public RunResultChainLinkRunner(ChainLinkDescription chainLinkDescription, IChainLinkRunner[] childLinkRunners)
+        public RunWithInputResultChainLinkRunner(ChainLinkDescription chainLinkDescription, IChainLinkRunner[] childLinkRunners)
         {
             this.chainLinkDescription = chainLinkDescription;
             this.childLinkRunners = childLinkRunners;
@@ -159,7 +159,7 @@ namespace ChainLink
             {
                 switch (child)
                 {
-                    case IRunChainLinkRunner<TResult> inputRunner:
+                    case IRunWithInputChainLinkRunner<TResult> inputRunner:
                         await inputRunner.RunAsync(result, context, cancellationToken);
                         break;
                     case IRunChainLinkRunner runner:

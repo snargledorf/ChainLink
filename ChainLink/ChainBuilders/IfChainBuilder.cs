@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ChainLink.ChainBuilders
 {
-    internal class IfChainBuilder : ChainBuilderBase, IChainLinkRunnerFactory, IRunChainBuilder<IfChainLink>
+    internal class IfChainBuilder : ChainBuilderBase, IChainLinkRunnerFactory
     {
         private readonly Func<IChainLinkRunContext, CancellationToken, Task<bool>> condition;
 
