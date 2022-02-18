@@ -10,7 +10,7 @@
     <RepositoryType>git</RepositoryType>
     <Description>Build chains of actions which can be reused</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>2.1.0</Version>
+    <Version>3.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
