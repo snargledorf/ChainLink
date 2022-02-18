@@ -9,6 +9,9 @@ namespace ChainLink.ChainBuilders
     {
         public IRunChainLinkRunner<T>[] Build() => Children.Select(c => c.CreateChainLinkRunner()).Cast<IRunChainLinkRunner<T>>().ToArray();
 
+        #region Run Implementation
+
+        #region Run ChainLink
         public new IInputRunChainBuilder<T, T, TChainLink> Run<TChainLink>(params object[] args)
             where TChainLink : IRunChainLink<T>
         {
@@ -32,6 +35,9 @@ namespace ChainLink.ChainBuilders
         {
             return AddChildChainBuilder(new InputRunResultChainBuilder<T, T, TResult, TChainLink>(chainLink, this));
         }
+        #endregion
+
+        #region Run Delegate
 
         public IInputRunChainBuilder<T, T, DelegateRunChainLink<T>> Run(Action<T> del)
         {
@@ -82,6 +88,12 @@ namespace ChainLink.ChainBuilders
         {
             return AddChildChainBuilder(new InputDelegateRunResultChainBuilder<T, T, TResult, DelegateRunResultChainLink<T, TResult>>(del, this));
         }
+
+        #endregion
+
+        #endregion
+
+        #region If Implementation
 
         public IInputRunResultChainBuilder<T, T, T, IfChainLink<T>> If(Func<T, bool> condition)
         {
@@ -142,5 +154,7 @@ namespace ChainLink.ChainBuilders
         {
             return If((_, context, cancel) => condition(context, cancel));
         }
+
+        #endregion
     }
 }
