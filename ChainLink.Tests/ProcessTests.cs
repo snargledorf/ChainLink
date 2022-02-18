@@ -219,6 +219,7 @@ namespace ChainLink.Tests
                 configure
                     .If(() => true)
                     .Run(() => " Hello World ")
+                    .If((IChainLinkRunContext context) => true)
                     .RunWithInput<string?, TrimInputStringLink>()
                     .If((input) => input == "Hello World")
                     .RunWithInput(input => trimmedString = input);

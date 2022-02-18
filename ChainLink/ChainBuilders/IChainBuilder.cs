@@ -68,6 +68,13 @@ namespace ChainLink.ChainBuilders
         IRunResultChainBuilder<T, TResult, DelegateWithInputRunResultChainLink<T, TResult>> RunWithInput<TResult>(Func<T, IChainLinkRunContext, CancellationToken, TResult> del);
         IRunResultChainBuilder<T, TResult, DelegateWithInputRunResultChainLink<T, TResult>> RunWithInput<TResult>(Func<T, IChainLinkRunContext, CancellationToken, Task<TResult>> del);
 
+        new IRunResultChainBuilder<T, T, IfChainLink<T>> If(Func<bool> condition);
+        new IRunResultChainBuilder<T, T, IfChainLink<T>> If(Func<Task<bool>> condition);
+        new IRunResultChainBuilder<T, T, IfChainLink<T>> If(Func<IChainLinkRunContext, bool> condition);
+        new IRunResultChainBuilder<T, T, IfChainLink<T>> If(Func<IChainLinkRunContext, Task<bool>> condition);
+        new IRunResultChainBuilder<T, T, IfChainLink<T>> If(Func<IChainLinkRunContext, CancellationToken, bool> condition);
+        new IRunResultChainBuilder<T, T, IfChainLink<T>> If(Func<IChainLinkRunContext, CancellationToken, Task<bool>> condition);
+
         IRunResultChainBuilder<T, T, IfChainLink<T>> If(Func<T, bool> condition);
         IRunResultChainBuilder<T, T, IfChainLink<T>> If(Func<T, Task<bool>> condition);
         IRunResultChainBuilder<T, T, IfChainLink<T>> If(Func<T, IChainLinkRunContext, bool> condition);

@@ -101,6 +101,36 @@ namespace ChainLink.ChainBuilders
             return AddChildChainBuilder(new DelegateWithInputRunResultChainBuilder<T, TResult, DelegateWithInputRunResultChainLink<T, TResult>>(del, this));
         }
 
+        new public IRunResultChainBuilder<T, T, IfChainLink<T>> If(Func<bool> condition)
+        {
+            return If((_, __, cancel) => Task.Run(() => condition(), cancel));
+        }
+
+        new public IRunResultChainBuilder<T, T, IfChainLink<T>> If(Func<Task<bool>> condition)
+        {
+            return If((_, __, ___) => condition());
+        }
+
+        new public IRunResultChainBuilder<T, T, IfChainLink<T>> If(Func<IChainLinkRunContext, bool> condition)
+        {
+            return If((_, context, cancel) => Task.Run(() => condition(context), cancel));
+        }
+
+        new public IRunResultChainBuilder<T, T, IfChainLink<T>> If(Func<IChainLinkRunContext, Task<bool>> condition)
+        {
+            return If((_, context, __) => condition(context));
+        }
+
+        new public IRunResultChainBuilder<T, T, IfChainLink<T>> If(Func<IChainLinkRunContext, CancellationToken, bool> condition)
+        {
+            return If((_, context, cancel) => Task.Run(() => condition(context, cancel), cancel));
+        }
+
+        new public IRunResultChainBuilder<T, T, IfChainLink<T>> If(Func<IChainLinkRunContext, CancellationToken, Task<bool>> condition)
+        {
+            return If((_, context, cancel) => condition(context, cancel));
+        }
+
         public IRunResultChainBuilder<T, T, IfChainLink<T>> If(Func<T, bool> condition)
         {
             return If((input, _, cancel) => Task.Run(() => condition(input), cancel));
