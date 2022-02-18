@@ -114,7 +114,7 @@ namespace ChainLink.Tests
             IChain<string> chain = new Chain<string>(configure =>
             {
                 configure
-                    .RunWithInput<string?, TrimInputStringLink>()
+                    .Run<string?, TrimInputStringLink>()
                     .RunWithResult(input => trimmedString = input);
             });
 
@@ -133,7 +133,7 @@ namespace ChainLink.Tests
             IChain<string> chain = new Chain<string>(configure =>
             {
                 configure
-                    .RunWithInput((input) => input.Trim())
+                    .Run((input) => input.Trim())
                     .RunWithResult(input => trimmedString = input);
             });
 
@@ -152,7 +152,7 @@ namespace ChainLink.Tests
             IChain<string> chain = new Chain<string>(configure =>
             {
                 configure
-                    .RunWithInput<string?, TrimInputStringLink>(new TrimInputStringLink())
+                    .Run<string?, TrimInputStringLink>(new TrimInputStringLink())
                     .RunWithResult(input => trimmedString = input)
                     .GetResult(new HelloWorldLink())
                     .Run(new SetContextVariableLink(" Test "));
