@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace ChainLink.ChainBuilders
 {
-    public interface IChainBuilder : IChainLinkRunnerFactory
+    public interface IChainBuilder
     {
         IRunChainBuilder<TChainLink> Run<TChainLink>(params object[] args)
             where TChainLink : IRunChainLink;
@@ -26,6 +26,13 @@ namespace ChainLink.ChainBuilders
 
         IResultChainBuilder<T, TChainLink> GetResult<T, TChainLink>(params object[] args)
             where TChainLink : IResultChainLink<T>;
+
+        IChainBuilder If(Func<bool> condition);
+        IChainBuilder If(Func<Task<bool>> condition);
+        IChainBuilder If(Func<IChainLinkRunContext, bool> condition);
+        IChainBuilder If(Func<IChainLinkRunContext, Task<bool>> condition);
+        IChainBuilder If(Func<IChainLinkRunContext, CancellationToken, bool> condition);
+        IChainBuilder If(Func<IChainLinkRunContext, CancellationToken, Task<bool>> condition);
     }
 
     public interface IRunChainBuilder<TChainLink> : IChainBuilder
@@ -58,6 +65,13 @@ namespace ChainLink.ChainBuilders
         IRunResultChainBuilder<T, TResult, DelegateRunResultChainLink<T, TResult>> RunWithResult<TResult>(Func<T, IChainLinkRunContext, Task<TResult>> del);
         IRunResultChainBuilder<T, TResult, DelegateRunResultChainLink<T, TResult>> RunWithResult<TResult>(Func<T, IChainLinkRunContext, CancellationToken, TResult> del);
         IRunResultChainBuilder<T, TResult, DelegateRunResultChainLink<T, TResult>> RunWithResult<TResult>(Func<T, IChainLinkRunContext, CancellationToken, Task<TResult>> del);
+
+        IResultChainBuilder<T, TChainLink> If(Func<T, bool> condition);
+        IResultChainBuilder<T, TChainLink> If(Func<T, Task<bool>> condition);
+        IResultChainBuilder<T, TChainLink> If(Func<T, IChainLinkRunContext, bool> condition);
+        IResultChainBuilder<T, TChainLink> If(Func<T, IChainLinkRunContext, Task<bool>> condition);
+        IResultChainBuilder<T, TChainLink> If(Func<T, IChainLinkRunContext, CancellationToken, bool> condition);
+        IResultChainBuilder<T, TChainLink> If(Func<T, IChainLinkRunContext, CancellationToken, Task<bool>> condition);
     }
 
     public interface IRunResultChainBuilder<TInput, TResult, TChainLink>

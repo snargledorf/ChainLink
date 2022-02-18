@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ChainLink.ChainBuilders
 {
-    internal abstract class ChainBuilderBase<TChainLink> : ChainBuilderBase
+    internal abstract class ChainBuilderBase<TChainLink> : ChainBuilderBase, IChainLinkRunnerFactory
     {
         protected ChainBuilderBase(object[] chainLinkArgs, ChainBuilderBase previous = null)
             : this(ReflectionUtils.CreateObject<TChainLink>(chainLinkArgs), previous)
@@ -19,25 +19,27 @@ namespace ChainLink.ChainBuilders
         }
 
         public TChainLink ChainLink { get; }
+
+        public abstract IChainLinkRunner CreateChainLinkRunner();
     }
 
     internal abstract class ChainBuilderBase : IChainBuilder
     {
+        protected List<IChainLinkRunnerFactory> Children { get; } = new List<IChainLinkRunnerFactory>();
+
         protected ChainBuilderBase(ChainBuilderBase previous = null)
         {
             Previous = previous;
         }
 
-        private ChainBuilderBase Root => Previous?.Root ?? this;
+        protected ChainBuilderBase Root => Previous?.Root ?? this;
 
-        private ChainBuilderBase Previous { get; }
+        protected ChainBuilderBase Previous { get; }
 
-        protected List<IChainBuilder> Children { get; } = new List<IChainBuilder>();
-
-        public IRunChainBuilder<TChainLink> Run<TChainLink>(params object[] args)
-            where TChainLink : IRunChainLink
+        public IRunChainBuilder<TNewChainLink> Run<TNewChainLink>(params object[] args)
+            where TNewChainLink : IRunChainLink
         {
-            return AddChildChainBuilder(new RunChainBuilder<TChainLink>(args, this));
+            return AddChildChainBuilder(new RunChainBuilder<TNewChainLink>(args, this));
         }
 
         public IRunResultChainBuilder<T, TChainLink> Run<T, TChainLink>(params object[] args)
@@ -102,10 +104,8 @@ namespace ChainLink.ChainBuilders
             return AddChildChainBuilder(new ResultChainBuilder<T, TChainLink>(args, this));
         }
 
-        public abstract IChainLinkRunner CreateChainLinkRunner();
-
         protected TChainBuilder AddChildChainBuilder<TChainBuilder>(TChainBuilder child)
-            where TChainBuilder : IChainBuilder
+            where TChainBuilder : IChainLinkRunnerFactory
         {
             Children.Add(child);
             return child;

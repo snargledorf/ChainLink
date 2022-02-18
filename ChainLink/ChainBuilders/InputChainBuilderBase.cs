@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace ChainLink.ChainBuilders
 {
-    internal abstract class InputChainBuilderBase<T, TChainLink> : InputChainBuilderBase<T>
+    internal abstract class InputChainBuilderBase<T, TChainLink> : InputChainBuilderBase<T>, IChainLinkRunnerFactory
     {
         protected InputChainBuilderBase(object[] chainLinkArgs, InputChainBuilderBase<T> previous = null)
             : this(ReflectionUtils.CreateObject<TChainLink>(chainLinkArgs), previous)
@@ -21,6 +19,8 @@ namespace ChainLink.ChainBuilders
         }
 
         public TChainLink ChainLink { get; }
+
+        public abstract IChainLinkRunner CreateChainLinkRunner();
     }
 
     internal abstract class InputChainBuilderBase<T> : IInputChainBuilder<T>
@@ -34,7 +34,7 @@ namespace ChainLink.ChainBuilders
 
         public InputChainBuilderBase<T> Previous { get; }
 
-        protected List<IInputChainBuilder<T>> Children { get; } = new List<IInputChainBuilder<T>>();
+        protected List<IChainLinkRunnerFactory> Children { get; } = new List<IChainLinkRunnerFactory>();
 
         public IInputRunChainBuilder<T, TChainLink> Run<TChainLink>(params object[] args)
             where TChainLink : IRunChainLink
@@ -104,10 +104,8 @@ namespace ChainLink.ChainBuilders
             return AddChildChainBuilder(new InputResultChainBuilder<T, TResult, TChainLink>(args, this));
         }
 
-        public abstract IChainLinkRunner CreateChainLinkRunner();
-
         protected TChainBuilder AddChildChainBuilder<TChainBuilder>(TChainBuilder child)
-            where TChainBuilder : IInputChainBuilder<T>
+            where TChainBuilder : IChainLinkRunnerFactory
         {
             Children.Add(child);
             return child;
