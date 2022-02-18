@@ -5,13 +5,8 @@ using System.Threading.Tasks;
 
 namespace ChainLink.ChainBuilders
 {
-    internal abstract class InputChainBuilderBase<T, TChainLink> : InputChainBuilderBase<T>, IChainLinkRunnerFactory
+    public abstract class InputChainBuilderBase<T, TChainLink> : InputChainBuilderBase<T>, IChainLinkRunnerFactory
     {
-        protected InputChainBuilderBase(object[] chainLinkArgs, InputChainBuilderBase<T> previous = null)
-            : this(ReflectionUtils.CreateObject<TChainLink>(chainLinkArgs), previous)
-        {
-        }
-
         protected InputChainBuilderBase(TChainLink chainLink, InputChainBuilderBase<T> previous = null)
             : base(previous)
         {
@@ -23,7 +18,7 @@ namespace ChainLink.ChainBuilders
         public abstract IChainLinkRunner CreateChainLinkRunner();
     }
 
-    internal abstract class InputChainBuilderBase<T> : IInputChainBuilder<T>
+    public abstract class InputChainBuilderBase<T> : IInputChainBuilder<T>
     {
         protected InputChainBuilderBase(InputChainBuilderBase<T> previous = null)
         {
@@ -39,13 +34,23 @@ namespace ChainLink.ChainBuilders
         public IInputRunChainBuilder<T, TChainLink> Run<TChainLink>(params object[] args)
             where TChainLink : IRunChainLink
         {
-            return AddChildChainBuilder(new InputRunChainBuilder<T, TChainLink>(args, this));
+            return AddChildChainBuilder(new InputRunChainBuilder<T, TChainLink>(ReflectionUtils.CreateObject<TChainLink>(args), this));
+        }
+
+        public IInputRunChainBuilder<T, IRunChainLink> Run(IRunChainLink chainLink)
+        {
+            return AddChildChainBuilder(new InputRunChainBuilder<T, IRunChainLink>(chainLink, this));
         }
 
         public IInputRunResultChainBuilder<T, TResult, TChainLink> Run<TResult, TChainLink>(params object[] args)
             where TChainLink : IRunChainLink, IResultChainLink<TResult>
         {
-            return AddChildChainBuilder(new InputRunResultChainBuilder<T, TResult, TChainLink>(args, this));
+            return AddChildChainBuilder(new InputRunResultChainBuilder<T, TResult, TChainLink>(ReflectionUtils.CreateObject<TChainLink>(args), this));
+        }
+
+        public IInputRunResultChainBuilder<T, TResult, TChainLink> Run<TResult, TChainLink>(TChainLink chainLink) where TChainLink : IRunChainLink, IResultChainLink<TResult>
+        {
+            return AddChildChainBuilder(new InputRunResultChainBuilder<T, TResult, TChainLink>(chainLink, this));
         }
 
         public IInputRunChainBuilder<T, DelegateRunChainLink> Run(Action del)
@@ -101,7 +106,42 @@ namespace ChainLink.ChainBuilders
         public IInputResultChainBuilder<T, TResult, TChainLink> GetResult<TResult, TChainLink>(params object[] args)
             where TChainLink : IResultChainLink<TResult>
         {
-            return AddChildChainBuilder(new InputResultChainBuilder<T, TResult, TChainLink>(args, this));
+            return AddChildChainBuilder(new InputResultChainBuilder<T, TResult, TChainLink>(ReflectionUtils.CreateObject<TChainLink>(args), this));
+        }
+
+        public IInputResultChainBuilder<T, TResult, IResultChainLink<TResult>> GetResult<TResult>(IResultChainLink<TResult> chainLink)
+        {
+            return AddChildChainBuilder(new InputResultChainBuilder<T, TResult, IResultChainLink<TResult>>(chainLink, this));
+        }
+
+        public IInputRunChainBuilder<T, IfChainLink> If(Func<bool> condition)
+        {
+            return If((_, cancel) => Task.Run(() => condition(), cancel));
+        }
+
+        public IInputRunChainBuilder<T, IfChainLink> If(Func<Task<bool>> condition)
+        {
+            return If((_, __) => condition());
+        }
+
+        public IInputRunChainBuilder<T, IfChainLink> If(Func<IChainLinkRunContext, bool> condition)
+        {
+            return If((context, cancel) => Task.Run(() => condition(context), cancel));
+        }
+
+        public IInputRunChainBuilder<T, IfChainLink> If(Func<IChainLinkRunContext, Task<bool>> condition)
+        {
+            return If((context, _) => condition(context));
+        }
+
+        public IInputRunChainBuilder<T, IfChainLink> If(Func<IChainLinkRunContext, CancellationToken, bool> condition)
+        {
+            return If((context, cancel) => Task.Run(() => condition(context, cancel), cancel));
+        }
+
+        public IInputRunChainBuilder<T, IfChainLink> If(Func<IChainLinkRunContext, CancellationToken, Task<bool>> condition)
+        {
+            return AddChildChainBuilder(new InputIfChainBuilder<T>(condition, this));
         }
 
         protected TChainBuilder AddChildChainBuilder<TChainBuilder>(TChainBuilder child)

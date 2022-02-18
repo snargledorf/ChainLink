@@ -5,11 +5,6 @@ using System.Threading.Tasks;
 
 namespace ChainLink
 {
-    public interface IChainLinkRunner
-    {
-
-    }
-
     public interface IRunChainLinkRunner : IChainLinkRunner
     {
         Task RunAsync(IChainLinkRunContext context, CancellationToken cancellationToken = default);
@@ -74,17 +69,16 @@ namespace ChainLink
             var result = chainLink.Result;
             foreach (var child in childLinkRunners)
             {
-                if (child is IRunChainLinkRunner<T> inputRunner)
+                switch (child)
                 {
-                    await inputRunner.RunAsync(result, context, cancellationToken);
-                }
-                else if (child is IRunChainLinkRunner runner)
-                {
-                    await runner.RunAsync(context, cancellationToken);
-                }
-                else
-                {
-                    throw new InvalidOperationException($"Not a Chain Link Runner: {child.GetType()}");
+                    case IRunChainLinkRunner<T> inputRunner:
+                        await inputRunner.RunAsync(result, context, cancellationToken);
+                        break;
+                    case IRunChainLinkRunner runner:
+                        await runner.RunAsync(context, cancellationToken);
+                        break;
+                    default:
+                        throw new InvalidOperationException($"Not a Chain Link Runner: {child.GetType()}");
                 }
             }
         }
@@ -108,17 +102,16 @@ namespace ChainLink
             var result = chainLink.Result;
             foreach (var child in childLinkRunners)
             {
-                if (child is IRunChainLinkRunner<TResult> inputRunner)
+                switch (child)
                 {
-                    await inputRunner.RunAsync(result, context, cancellationToken);
-                }
-                else if (child is IRunChainLinkRunner runner)
-                {
-                    await runner.RunAsync(context, cancellationToken);
-                }
-                else
-                {
-                    throw new InvalidOperationException($"Not a Chain Link Runner: {child.GetType()}");
+                    case IRunChainLinkRunner<TResult> inputRunner:
+                        await inputRunner.RunAsync(result, context, cancellationToken);
+                        break;
+                    case IRunChainLinkRunner runner:
+                        await runner.RunAsync(context, cancellationToken);
+                        break;
+                    default:
+                        throw new InvalidOperationException($"Not a Chain Link Runner: {child.GetType()}");
                 }
             }
         }
@@ -142,17 +135,16 @@ namespace ChainLink
             var result = chainLink.Result;
             foreach (var child in childLinkRunners)
             {
-                if (child is IRunChainLinkRunner<TResult> inputRunner)
+                switch (child)
                 {
-                    await inputRunner.RunAsync(result, context, cancellationToken);
-                }
-                else if (child is IRunChainLinkRunner runner)
-                {
-                    await runner.RunAsync(context, cancellationToken);
-                }
-                else
-                {
-                    throw new InvalidOperationException($"Not a Chain Link Runner: {child.GetType()}");
+                    case IRunChainLinkRunner<TResult> inputRunner:
+                        await inputRunner.RunAsync(result, context, cancellationToken);
+                        break;
+                    case IRunChainLinkRunner runner:
+                        await runner.RunAsync(context, cancellationToken);
+                        break;
+                    default:
+                        throw new InvalidOperationException($"Not a Chain Link Runner: {child.GetType()}");
                 }
             }
         }
