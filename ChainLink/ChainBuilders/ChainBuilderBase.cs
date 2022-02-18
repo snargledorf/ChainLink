@@ -7,13 +7,13 @@ namespace ChainLink.ChainBuilders
 {
     internal abstract class ChainBuilderBase<TChainLink> : ChainBuilderBase, IChainLinkRunnerFactory
     {
-        protected ChainBuilderBase(TChainLink chainLink, ChainBuilderBase previous = null)
+        protected ChainBuilderBase(object[] args, ChainBuilderBase previous = null)
             : base(previous)
         {
-            ChainLink = chainLink;
+            ChainLinkDescription = new ChainLinkDescription(typeof(TChainLink), args);
         }
 
-        public TChainLink ChainLink { get; }
+        public ChainLinkDescription ChainLinkDescription { get; }
 
         public abstract IChainLinkRunner CreateChainLinkRunner();
     }
@@ -31,28 +31,15 @@ namespace ChainLink.ChainBuilders
 
         protected ChainBuilderBase Previous { get; }
 
-        public IRunChainBuilder<TChainLink> Run<TChainLink>(params object[] args)
-            where TChainLink : IRunChainLink
+        public IRunChainBuilder<TChainLink> Run<TChainLink>(params object[] args) where TChainLink : IRunChainLink
         {
-            return AddChildChainBuilder(new RunChainBuilder<TChainLink>(ReflectionUtils.CreateObject<TChainLink>(args), this));
+            return AddChildChainBuilder(new RunChainBuilder<TChainLink>(args, this));
         }
 
-        public IRunChainBuilder<TChainLink> Run<TChainLink>(TChainLink chainLink) 
-            where TChainLink : IRunChainLink
-        {
-            return AddChildChainBuilder(new RunChainBuilder<TChainLink>(chainLink, this));
-        }
-
-        public IRunResultChainBuilder<T, TChainLink> Run<T, TChainLink>(params object[] args)
+        public IResultChainBuilder<T, TChainLink> Run<T, TChainLink>(params object[] args)
             where TChainLink : IRunChainLink, IResultChainLink<T>
         {
-            return AddChildChainBuilder(new RunResultChainBuilder<T, TChainLink>(ReflectionUtils.CreateObject<TChainLink>(args), this));
-        }
-
-        public IResultChainBuilder<T, TChainLink> Run<T, TChainLink>(TChainLink chainLink) 
-            where TChainLink : IRunChainLink, IResultChainLink<T>
-        {
-            return AddChildChainBuilder(new RunResultChainBuilder<T, TChainLink>(chainLink, this));
+            return AddChildChainBuilder(new RunResultChainBuilder<T, TChainLink>(args, this));
         }
 
         public IRunChainBuilder<DelegateRunChainLink> Run(Action del)
@@ -108,7 +95,7 @@ namespace ChainLink.ChainBuilders
         public IResultChainBuilder<T, TChainLink> GetResult<T, TChainLink>(params object[] args)
             where TChainLink : IResultChainLink<T>
         {
-            return AddChildChainBuilder(new ResultChainBuilder<T, TChainLink>(ReflectionUtils.CreateObject<TChainLink>(args), this));
+            return AddChildChainBuilder(new ResultChainBuilder<T, TChainLink>(args, this));
         }
 
         public IChainBuilder If(Func<bool> condition)

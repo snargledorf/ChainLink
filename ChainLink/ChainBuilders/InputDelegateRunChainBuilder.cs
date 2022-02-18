@@ -5,32 +5,31 @@ using System.Threading.Tasks;
 
 namespace ChainLink.ChainBuilders
 {
-    internal class InputDelegateRunChainBuilder<T> : InputChainBuilderBase<T>, IChainLinkRunnerFactory, IInputRunChainBuilder<T, DelegateRunChainLink>
+    internal class InputDelegateRunChainBuilder<T> : InputChainBuilderBase<T, DelegateRunChainLink>, IInputRunChainBuilder<T, DelegateRunChainLink>
     {
-        private readonly Func<IChainLinkRunContext, CancellationToken, Task> del;
-
         public InputDelegateRunChainBuilder(Func<IChainLinkRunContext, CancellationToken, Task> del, InputChainBuilderBase<T> previous = null)
-            : base(previous)
+            : base(new[] { del }, previous)
         {
-            this.del = del;
         }
 
-        public IChainLinkRunner CreateChainLinkRunner()
+        public override IChainLinkRunner CreateChainLinkRunner()
         {
-            return new RunChainLinkRunner(new DelegateRunChainLink(del), Children.Select(c => c.CreateChainLinkRunner()).ToArray());
+            return new RunChainLinkRunner(ChainLinkDescription, Children.Select(c => c.CreateChainLinkRunner()).ToArray());
         }
     }
 
     internal class InputDelegateRunChainBuilder<T, TInput> : InputRunResultChainBuilderBase<T, TInput, TInput, DelegateRunChainLink<TInput>>
     {
         public InputDelegateRunChainBuilder(Func<IChainLinkRunContext, CancellationToken, Task> del, InputChainBuilderBase<T> previous = null)
-            : base(new DelegateRunChainLink<TInput>(del), previous)
+            : base(new[] { del }, previous)
         {
         }
 
         public override IChainLinkRunner CreateChainLinkRunner()
         {
-            return new RunResultChainLinkRunner<TInput, TInput, DelegateRunChainLink<TInput>>(ChainLink, Children.Select(c => c.CreateChainLinkRunner()).ToArray());
+            return new RunResultChainLinkRunner<TInput, TInput, DelegateRunChainLink<TInput>>(
+                ChainLinkDescription,
+                Children.Select(c => c.CreateChainLinkRunner()).ToArray());
         }
     }
 }

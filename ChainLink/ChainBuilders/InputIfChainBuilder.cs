@@ -26,7 +26,7 @@ namespace ChainLink.ChainBuilders
         private readonly Func<TInputResult, IChainLinkRunContext, CancellationToken, Task<bool>> condition;
 
         public InputIfChainBuilder(Func<TInputResult, IChainLinkRunContext, CancellationToken, Task<bool>> condition, InputChainBuilderBase<T> previous = null)
-            : base(new IfChainLink<TInputResult>(condition), previous)
+            : base(Array.Empty<object>(), previous)
         {
             this.condition = condition;
         }

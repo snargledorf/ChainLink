@@ -6,14 +6,8 @@ namespace ChainLink.ChainBuilders
 {
     public interface IChainBuilder
     {
-        IRunChainBuilder<TChainLink> Run<TChainLink>(params object[] args)
-            where TChainLink : IRunChainLink;
-        IRunChainBuilder<TChainLink> Run<TChainLink>(TChainLink chainLink)
-            where TChainLink : IRunChainLink;
-        IRunResultChainBuilder<T, TChainLink> Run<T, TChainLink>(params object[] args)
-            where TChainLink : IRunChainLink, IResultChainLink<T>;
-        IResultChainBuilder<T, TChainLink> Run<T, TChainLink>(TChainLink chainLink)
-            where TChainLink : IRunChainLink, IResultChainLink<T>;
+        IRunChainBuilder<TChainLink> Run<TChainLink>(params object[] args) where TChainLink : IRunChainLink;
+        IResultChainBuilder<T, TChainLink> Run<T, TChainLink>(params object[] args) where TChainLink : IRunChainLink, IResultChainLink<T>;
 
         IRunChainBuilder<DelegateRunChainLink> Run(Action del);
         IRunChainBuilder<DelegateRunChainLink> Run(Func<Task> del);
@@ -27,8 +21,7 @@ namespace ChainLink.ChainBuilders
         IRunResultChainBuilder<T, DelegateRunResultChainLink<T>> Run<T>(Func<IChainLinkRunContext, CancellationToken, T> del);
         IRunResultChainBuilder<T, DelegateRunResultChainLink<T>> Run<T>(Func<IChainLinkRunContext, CancellationToken, Task<T>> del);
 
-        IResultChainBuilder<T, TChainLink> GetResult<T, TChainLink>(params object[] args)
-            where TChainLink : IResultChainLink<T>;
+        IResultChainBuilder<T, TChainLink> GetResult<T, TChainLink>(params object[] args) where TChainLink : IResultChainLink<T>;
 
         IChainBuilder If(Func<bool> condition);
         IChainBuilder If(Func<Task<bool>> condition);
@@ -51,9 +44,9 @@ namespace ChainLink.ChainBuilders
     public interface IResultChainBuilder<T, TChainLink> : IChainBuilder
         where TChainLink : IResultChainLink<T>
     {
-        IRunChainBuilder<T, TNewChainLink> RunWithResult<TNewChainLink>(params object[] args)
-            where TNewChainLink : IRunChainLink<T>;
-        IRunChainBuilder<T, IRunChainLink<T>> RunWithResult(IRunChainLink<T> chainLink);
+        new IRunResultChainBuilder<T, T, RunChainLinkPassInputWrapper<T, TNewChainLink>> Run<TNewChainLink>(params object[] args) where TNewChainLink : IRunChainLink;
+
+        IRunChainBuilder<T, TNewChainLink> RunWithResult<TNewChainLink>(params object[] args) where TNewChainLink : IRunChainLink<T>;
 
         IRunResultChainBuilder<T, TResult, TNewChainLink> RunWithResult<TResult, TNewChainLink>(params object[] args)
             where TNewChainLink : IRunChainLink<T>, IResultChainLink<TResult>;

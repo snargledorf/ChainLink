@@ -115,7 +115,7 @@ namespace ChainLink.Tests
             IChain<string> chain = new Chain<string>(configure =>
             {
                 configure
-                    .Run<string?, TrimInputStringLink>()
+                    .RunWithInput<string?, TrimInputStringLink>()
                     .RunWithResult(input => trimmedString = input);
             });
 
@@ -157,6 +157,7 @@ namespace ChainLink.Tests
                     .RunWithResult(input => Console.Write(input))
                     .RunWithResult(input => input.Trim())
                     .Run(() => Console.Write("Hello"))
+                    .Run<SetContextVariableLink>("Bar")
                     .RunWithResult(input => trimmedString = input);
             });
 
@@ -176,6 +177,7 @@ namespace ChainLink.Tests
                     .Run(() => Console.Write("Hello"))
                     .RunWithResult<string?, TrimInputStringLink>()
                     .Run(() => Console.Write("Hello"))
+                    .Run<SetContextVariableLink>("Bar")
                     .RunWithResult(input => trimmedString = input);
             });
 
@@ -194,10 +196,10 @@ namespace ChainLink.Tests
             IChain<string> chain = new Chain<string>(configure =>
             {
                 configure
-                    .Run<string?, TrimInputStringLink>(new TrimInputStringLink())
+                    .RunWithInput<string?, TrimInputStringLink>()
                     .RunWithResult(input => trimmedString = input)
-                    .GetResult(new HelloWorldLink())
-                    .Run(new SetContextVariableLink(" Test "));
+                    .GetResult<string, HelloWorldLink>()
+                    .Run<SetContextVariableLink>(" Test ");
             });
 
             await chain.RunAsync(" Hello World ");

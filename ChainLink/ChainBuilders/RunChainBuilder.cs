@@ -5,28 +5,28 @@ namespace ChainLink.ChainBuilders
     internal class RunChainBuilder<TChainLink> : ChainBuilderBase<TChainLink>, IRunChainBuilder<TChainLink>
         where TChainLink : IRunChainLink
     {
-        public RunChainBuilder(TChainLink chainLink, ChainBuilderBase previous = null)
-            : base(chainLink, previous)
+        public RunChainBuilder(object[] args, ChainBuilderBase previous = null)
+            : base(args, previous)
         {
         }
 
         public override IChainLinkRunner CreateChainLinkRunner()
         {
-            return new RunChainLinkRunner(ChainLink, Children.Select(c => c.CreateChainLinkRunner()).ToArray());
+            return new RunChainLinkRunner(ChainLinkDescription, Children.Select(c => c.CreateChainLinkRunner()).ToArray());
         }
     }
 
     internal class RunChainBuilder<T, TChainLink> : ChainBuilderBase<TChainLink>, IRunChainBuilder<T, TChainLink>
         where TChainLink : IRunChainLink<T>
     {
-        public RunChainBuilder(TChainLink chainLink, ChainBuilderBase previous = null)
-            : base(chainLink, previous)
+        public RunChainBuilder(object[] args, ChainBuilderBase previous = null)
+            : base(args, previous)
         {
         }
 
         public override IChainLinkRunner CreateChainLinkRunner()
         {
-            return new RunChainLinkRunner<T>(ChainLink, Children.Select(c => c.CreateChainLinkRunner()).ToArray());
+            return new RunChainLinkRunner<T>(ChainLinkDescription, Children.Select(c => c.CreateChainLinkRunner()).ToArray());
         }
     }
 }

@@ -7,8 +7,8 @@ namespace ChainLink
 {
     internal class IfChainLinkRunner : IRunChainLinkRunner
     {
-        private readonly IEnumerable<IChainLinkRunner> childLinkRunners;
         private readonly Func<IChainLinkRunContext, CancellationToken, Task<bool>> condition;
+        private readonly IEnumerable<IChainLinkRunner> childLinkRunners;
 
         public IfChainLinkRunner(Func<IChainLinkRunContext, CancellationToken, Task<bool>> condition, IChainLinkRunner[] childLinkRunners)
         {
@@ -28,8 +28,8 @@ namespace ChainLink
 
     internal class IfChainLinkRunner<T> : IRunChainLinkRunner<T>
     {
-        private readonly IEnumerable<IChainLinkRunner> childLinkRunners;
         private readonly Func<T, IChainLinkRunContext, CancellationToken, Task<bool>> condition;
+        private readonly IEnumerable<IChainLinkRunner> childLinkRunners;
 
         public IfChainLinkRunner(Func<T, IChainLinkRunContext, CancellationToken, Task<bool>> condition, IChainLinkRunner[] childLinkRunners)
         {

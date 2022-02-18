@@ -6,13 +6,13 @@ namespace ChainLink
 {
     internal static class ReflectionUtils
     {
-        public static T CreateObject<T>(object[] args)
+        public static object CreateObject(Type type, object[] args)
         {
             if (args.Length == 0)
-                return Activator.CreateInstance<T>();
+                return Activator.CreateInstance(type);
 
-            ConstructorInfo constructorInfo = typeof(T).GetConstructor(args.Select(arg => arg.GetType()).ToArray());
-            return (T)constructorInfo.Invoke(args);
+            ConstructorInfo constructorInfo = type.GetConstructor(args.Select(arg => arg.GetType()).ToArray());
+            return constructorInfo.Invoke(args);
         }
     }
 }

@@ -12,29 +12,26 @@ namespace ChainLink.ChainBuilders
         #region Run Implementation
 
         #region Run ChainLink
-        public new IInputRunChainBuilder<T, T, TChainLink> Run<TChainLink>(params object[] args)
+
+        new public IInputRunResultChainBuilder<T, T, T, RunChainLinkPassInputWrapper<T, TChainLink>> Run<TChainLink>(params object[] args)
+            where TChainLink : IRunChainLink
+        {
+            var wrapper = new RunChainLinkWrapperArgs(args);
+            return AddChildChainBuilder(new InputRunResultChainBuilder<T, T, T, RunChainLinkPassInputWrapper<T, TChainLink>>(new[] { wrapper }, this));
+        }
+
+        public IInputRunChainBuilder<T, T, TChainLink> RunWithInput<TChainLink>(params object[] args)
             where TChainLink : IRunChainLink<T>
         {
-            return AddChildChainBuilder(new InputRunChainBuilder<T, T, TChainLink>(ReflectionUtils.CreateObject<TChainLink>(args), this));
+            return AddChildChainBuilder(new InputRunChainBuilder<T, T, TChainLink>(args, this));
         }
 
-        public IInputRunChainBuilder<T, T, TChainLink> Run<TChainLink>(TChainLink chainLink)
-            where TChainLink : IRunChainLink<T>
-        {
-            return AddChildChainBuilder(new InputRunChainBuilder<T, T, TChainLink>(chainLink, this));
-        }
-
-        public new IInputRunResultChainBuilder<T, T, TResult, TChainLink> Run<TResult, TChainLink>(params object[] args)
+        public IInputRunResultChainBuilder<T, T, TResult, TChainLink> RunWithInput<TResult, TChainLink>(params object[] args)
             where TChainLink : IRunChainLink<T>, IResultChainLink<TResult>
         {
-            return AddChildChainBuilder(new InputRunResultChainBuilder<T, T, TResult, TChainLink>(ReflectionUtils.CreateObject<TChainLink>(args), this));
+            return AddChildChainBuilder(new InputRunResultChainBuilder<T, T, TResult, TChainLink>(args, this));
         }
 
-        public new IInputRunResultChainBuilder<T, T, TResult, TChainLink> Run<TResult, TChainLink>(TChainLink chainLink)
-            where TChainLink : IRunChainLink<T>, IResultChainLink<TResult>
-        {
-            return AddChildChainBuilder(new InputRunResultChainBuilder<T, T, TResult, TChainLink>(chainLink, this));
-        }
         #endregion
 
         #region Run Delegate

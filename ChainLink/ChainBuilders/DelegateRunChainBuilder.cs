@@ -5,32 +5,29 @@ using System.Threading.Tasks;
 
 namespace ChainLink.ChainBuilders
 {
-    internal class DelegateRunChainBuilder : ChainBuilderBase, IChainLinkRunnerFactory, IRunChainBuilder<DelegateRunChainLink>
+    internal class DelegateRunChainBuilder : ChainBuilderBase<DelegateRunChainLink>, IRunChainBuilder<DelegateRunChainLink>
     {
-        private readonly Func<IChainLinkRunContext, CancellationToken, Task> del;
-
         public DelegateRunChainBuilder(Func<IChainLinkRunContext, CancellationToken, Task> del, ChainBuilderBase previous = null)
-            : base(previous)
+            : base(new[] { del }, previous)
         {
-            this.del = del;
         }
 
-        public IChainLinkRunner CreateChainLinkRunner()
+        public override IChainLinkRunner CreateChainLinkRunner()
         {
-            return new RunChainLinkRunner(new DelegateRunChainLink(del), Children.Select(c => c.CreateChainLinkRunner()).ToArray());
+            return new RunChainLinkRunner(ChainLinkDescription, Children.Select(c => c.CreateChainLinkRunner()).ToArray());
         }
     }
 
     internal class DelegateRunChainBuilder<T> : RunResultChainBuilderBase<T, T, DelegateRunChainLink<T>>
     {
         public DelegateRunChainBuilder(Func<IChainLinkRunContext, CancellationToken, Task> del, ChainBuilderBase previous = null)
-            : base(new DelegateRunChainLink<T>(del), previous)
+            : base(new[] { del }, previous)
         {
         }
 
         public override IChainLinkRunner CreateChainLinkRunner()
         {
-            return new RunResultChainLinkRunner<T, T, DelegateRunChainLink<T>>(ChainLink, Children.Select(c => c.CreateChainLinkRunner()).ToArray());
+            return new RunResultChainLinkRunner<T, T, DelegateRunChainLink<T>>(ChainLinkDescription, Children.Select(c => c.CreateChainLinkRunner()).ToArray());
         }
     }
 }

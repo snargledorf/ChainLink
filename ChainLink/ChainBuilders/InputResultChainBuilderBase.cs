@@ -7,21 +7,28 @@ namespace ChainLink.ChainBuilders
     internal abstract class InputResultChainBuilderBase<T, TResult, TChainLink> : InputChainBuilderBase<T, TChainLink>, IInputResultChainBuilder<T, TResult, TChainLink>
         where TChainLink : IResultChainLink<TResult>
     {
-        protected InputResultChainBuilderBase(TChainLink chainLink, InputChainBuilderBase<T> previous)
-            : base(chainLink, previous)
+        protected InputResultChainBuilderBase(object[] args, InputChainBuilderBase<T> previous)
+            : base(args, previous)
         {
+        }
+
+        new public IInputRunResultChainBuilder<T, TResult, TResult, RunChainLinkPassInputWrapper<TResult, TNewChainLink>> Run<TNewChainLink>(params object[] args)
+            where TNewChainLink : IRunChainLink
+        {
+            var wrapper = new RunChainLinkWrapperArgs(args);
+            return AddChildChainBuilder(new InputRunResultChainBuilder<T, TResult, TResult, RunChainLinkPassInputWrapper<TResult, TNewChainLink>>(new[] { wrapper }, this));
         }
 
         public IInputRunChainBuilder<T, TResult, TNewChainLink> RunWithResult<TNewChainLink>(params object[] args)
             where TNewChainLink : IRunChainLink<TResult>
         {
-            return AddChildChainBuilder(new InputRunChainBuilder<T, TResult, TNewChainLink>(ReflectionUtils.CreateObject<TNewChainLink>(args), this));
+            return AddChildChainBuilder(new InputRunChainBuilder<T, TResult, TNewChainLink>(args, this));
         }
 
         public IInputRunResultChainBuilder<T, TResult, TNewResult, TNewChainLink> RunWithResult<TNewResult, TNewChainLink>(params object[] args)
             where TNewChainLink : IRunChainLink<TResult>, IResultChainLink<TNewResult>
         {
-            return AddChildChainBuilder(new InputRunResultChainBuilder<T, TResult, TNewResult, TNewChainLink>(ReflectionUtils.CreateObject<TNewChainLink>(args), this));
+            return AddChildChainBuilder(new InputRunResultChainBuilder<T, TResult, TNewResult, TNewChainLink>(args, this));
         }
 
         new public IInputRunResultChainBuilder<T, TResult, TResult, DelegateRunChainLink<TResult>> Run(Action del)
