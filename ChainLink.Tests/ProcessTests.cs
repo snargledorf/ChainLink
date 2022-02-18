@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -138,6 +139,47 @@ namespace ChainLink.Tests
             });
 
             await chain.RunAsync(" Hello World ");
+
+            Assert.AreEqual(Expected, trimmedString);
+        }
+
+        [TestMethod]
+        public async Task ResultsPassedAlong()
+        {
+            const string Expected = "Hello World";
+
+            string? trimmedString = null;
+
+            IChain chain = new Chain(configure =>
+            {
+                configure
+                    .Run(() => " Hello World ")
+                    .RunWithResult(input => Console.Write(input))
+                    .RunWithResult(input => input.Trim())
+                    .Run(() => Console.Write("Hello"))
+                    .RunWithResult(input => trimmedString = input);
+            });
+
+            await chain.RunAsync();
+
+            Assert.AreEqual(Expected, trimmedString);
+
+            trimmedString = null;
+
+            IChain<string> inputChain = new Chain<string>(configure =>
+            {
+                configure
+                    .Run(input => Console.Write(input))
+                    .RunWithResult(input => input.Trim())
+                    .Run(() => Console.Write("Hello"))
+                    .RunWithResult(input => input + " ")
+                    .Run(() => Console.Write("Hello"))
+                    .RunWithResult<string?, TrimInputStringLink>()
+                    .Run(() => Console.Write("Hello"))
+                    .RunWithResult(input => trimmedString = input);
+            });
+
+            await chain.RunAsync();
 
             Assert.AreEqual(Expected, trimmedString);
         }

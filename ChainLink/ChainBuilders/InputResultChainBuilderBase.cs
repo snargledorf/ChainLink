@@ -24,54 +24,74 @@ namespace ChainLink.ChainBuilders
             return AddChildChainBuilder(new InputRunResultChainBuilder<T, TResult, TNewResult, TNewChainLink>(ReflectionUtils.CreateObject<TNewChainLink>(args), this));
         }
 
-        public IInputRunChainBuilder<T, TResult, DelegateRunChainLink<TResult>> RunWithResult(Action<TResult> del)
+        new public IInputRunResultChainBuilder<T, TResult, TResult, DelegateRunChainLink<TResult>> Run(Action del)
         {
-            return RunWithResult((input, _, cancel) => Task.Run(() => del(input), cancel));
+            return Run((_, cancel) => Task.Run(del, cancel));
         }
 
-        public IInputRunChainBuilder<T, TResult, DelegateRunChainLink<TResult>> RunWithResult(Func<TResult, Task> del)
+        new public IInputRunResultChainBuilder<T, TResult, TResult, DelegateRunChainLink<TResult>> Run(Func<Task> del)
         {
-            return RunWithResult((input, _, __) => del(input));
+            return Run((_, __) => del());
         }
 
-        public IInputRunChainBuilder<T, TResult, DelegateRunChainLink<TResult>> RunWithResult(Func<TResult, IChainLinkRunContext, Task> del)
+        new public IInputRunResultChainBuilder<T, TResult, TResult, DelegateRunChainLink<TResult>> Run(Func<IChainLinkRunContext, Task> del)
         {
-            return RunWithResult((input, context, _) => del(input, context));
+            return Run((context, _) => del(context));
         }
 
-        public IInputRunChainBuilder<T, TResult, DelegateRunChainLink<TResult>> RunWithResult(Func<TResult, IChainLinkRunContext, CancellationToken, Task> del)
+        new public IInputRunResultChainBuilder<T, TResult, TResult, DelegateRunChainLink<TResult>> Run(Func<IChainLinkRunContext, CancellationToken, Task> del)
         {
             return AddChildChainBuilder(new InputDelegateRunChainBuilder<T, TResult>(del, this));
         }
 
-        public IInputRunResultChainBuilder<T, TResult, TNewResult, DelegateRunResultChainLink<TResult, TNewResult>> RunWithResult<TNewResult>(Func<TResult, TNewResult> del)
+        public IInputRunResultChainBuilder<T, TResult, TResult, DelegateWithInputRunChainLink<TResult>> RunWithResult(Action<TResult> del)
         {
             return RunWithResult((input, _, cancel) => Task.Run(() => del(input), cancel));
         }
 
-        public IInputRunResultChainBuilder<T, TResult, TNewResult, DelegateRunResultChainLink<TResult, TNewResult>> RunWithResult<TNewResult>(Func<TResult, Task<TNewResult>> del)
+        public IInputRunResultChainBuilder<T, TResult, TResult, DelegateWithInputRunChainLink<TResult>> RunWithResult(Func<TResult, Task> del)
         {
             return RunWithResult((input, _, __) => del(input));
         }
 
-        public IInputRunResultChainBuilder<T, TResult, TNewResult, DelegateRunResultChainLink<TResult, TNewResult>> RunWithResult<TNewResult>(Func<TResult, IChainLinkRunContext, TNewResult> del)
-        {
-            return RunWithResult((input, context, cancel) => Task.Run(() => del(input, context), cancel));
-        }
-
-        public IInputRunResultChainBuilder<T, TResult, TNewResult, DelegateRunResultChainLink<TResult, TNewResult>> RunWithResult<TNewResult>(Func<TResult, IChainLinkRunContext, Task<TNewResult>> del)
+        public IInputRunResultChainBuilder<T, TResult, TResult, DelegateWithInputRunChainLink<TResult>> RunWithResult(Func<TResult, IChainLinkRunContext, Task> del)
         {
             return RunWithResult((input, context, _) => del(input, context));
         }
 
-        public IInputRunResultChainBuilder<T, TResult, TNewResult, DelegateRunResultChainLink<TResult, TNewResult>> RunWithResult<TNewResult>(Func<TResult, IChainLinkRunContext, CancellationToken, TNewResult> del)
+        public IInputRunResultChainBuilder<T, TResult, TResult, DelegateWithInputRunChainLink<TResult>> RunWithResult(Func<TResult, IChainLinkRunContext, CancellationToken, Task> del)
+        {
+            return AddChildChainBuilder(new InputDelegateWithInputRunChainBuilder<T, TResult>(del, this));
+        }
+
+        public IInputRunResultChainBuilder<T, TResult, TNewResult, DelegateWithInputRunResultChainLink<TResult, TNewResult>> RunWithResult<TNewResult>(Func<TResult, TNewResult> del)
+        {
+            return RunWithResult((input, _, cancel) => Task.Run(() => del(input), cancel));
+        }
+
+        public IInputRunResultChainBuilder<T, TResult, TNewResult, DelegateWithInputRunResultChainLink<TResult, TNewResult>> RunWithResult<TNewResult>(Func<TResult, Task<TNewResult>> del)
+        {
+            return RunWithResult((input, _, __) => del(input));
+        }
+
+        public IInputRunResultChainBuilder<T, TResult, TNewResult, DelegateWithInputRunResultChainLink<TResult, TNewResult>> RunWithResult<TNewResult>(Func<TResult, IChainLinkRunContext, TNewResult> del)
+        {
+            return RunWithResult((input, context, cancel) => Task.Run(() => del(input, context), cancel));
+        }
+
+        public IInputRunResultChainBuilder<T, TResult, TNewResult, DelegateWithInputRunResultChainLink<TResult, TNewResult>> RunWithResult<TNewResult>(Func<TResult, IChainLinkRunContext, Task<TNewResult>> del)
+        {
+            return RunWithResult((input, context, _) => del(input, context));
+        }
+
+        public IInputRunResultChainBuilder<T, TResult, TNewResult, DelegateWithInputRunResultChainLink<TResult, TNewResult>> RunWithResult<TNewResult>(Func<TResult, IChainLinkRunContext, CancellationToken, TNewResult> del)
         {
             return RunWithResult((input, context, cancel) => Task.Run(() => del(input, context, cancel), cancel));
         }
 
-        public IInputRunResultChainBuilder<T, TResult, TNewResult, DelegateRunResultChainLink<TResult, TNewResult>> RunWithResult<TNewResult>(Func<TResult, IChainLinkRunContext, CancellationToken, Task<TNewResult>> del)
+        public IInputRunResultChainBuilder<T, TResult, TNewResult, DelegateWithInputRunResultChainLink<TResult, TNewResult>> RunWithResult<TNewResult>(Func<TResult, IChainLinkRunContext, CancellationToken, Task<TNewResult>> del)
         {
-            return AddChildChainBuilder(new InputDelegateRunResultChainBuilder<T, TResult, TNewResult, DelegateRunResultChainLink<TResult, TNewResult>>(del, this));
+            return AddChildChainBuilder(new InputDelegateWithInputRunResultChainBuilder<T, TResult, TNewResult, DelegateWithInputRunResultChainLink<TResult, TNewResult>>(del, this));
         }
 
         public new IInputRunResultChainBuilder<T, TResult, TResult, IfChainLink<TResult>> If(Func<bool> condition)

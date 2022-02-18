@@ -49,7 +49,19 @@ namespace ChainLink
         {
             await chainLink.RunAsync(input, context, cancellationToken);
             foreach (var child in childLinkRunners)
-                await ((IRunChainLinkRunner)child).RunAsync(context, cancellationToken);
+            {
+                switch (child)
+                {
+                    case IRunChainLinkRunner<T> inputRunner:
+                        await inputRunner.RunAsync(input, context, cancellationToken);
+                        break;
+                    case IRunChainLinkRunner runner:
+                        await runner.RunAsync(context, cancellationToken);
+                        break;
+                    default:
+                        throw new InvalidOperationException($"Not a Chain Link Runner: {child.GetType()}");
+                }
+            }
         }
     }
 
