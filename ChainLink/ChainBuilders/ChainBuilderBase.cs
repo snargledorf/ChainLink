@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 namespace ChainLink.ChainBuilders
 {
     internal abstract class ChainBuilderBase<TChainLink> : ChainBuilderBase, IChainLinkRunnerFactory
+        where TChainLink : IChainLink
     {
         protected ChainBuilderBase(object[] args, ChainBuilderBase previous = null)
             : base(previous)
@@ -98,32 +99,32 @@ namespace ChainLink.ChainBuilders
             return AddChildChainBuilder(new GetResultChainBuilder<T, TChainLink>(args, this));
         }
 
-        public IChainBuilder If(Func<bool> condition)
+        public IIfChainBuilder If(Func<bool> condition)
         {
             return If((_, cancel) => Task.Run(() => condition(), cancel));
         }
 
-        public IChainBuilder If(Func<Task<bool>> condition)
+        public IIfChainBuilder If(Func<Task<bool>> condition)
         {
             return If((_, __) => condition());
         }
 
-        public IChainBuilder If(Func<IChainLinkRunContext, bool> condition)
+        public IIfChainBuilder If(Func<IChainLinkRunContext, bool> condition)
         {
             return If((context, cancel) => Task.Run(() => condition(context), cancel));
         }
 
-        public IChainBuilder If(Func<IChainLinkRunContext, Task<bool>> condition)
+        public IIfChainBuilder If(Func<IChainLinkRunContext, Task<bool>> condition)
         {
             return If((context, _) => condition(context));
         }
 
-        public IChainBuilder If(Func<IChainLinkRunContext, CancellationToken, bool> condition)
+        public IIfChainBuilder If(Func<IChainLinkRunContext, CancellationToken, bool> condition)
         {
             return If((context, cancel) => Task.Run(() => condition(context, cancel), cancel));
         }
 
-        public IChainBuilder If(Func<IChainLinkRunContext, CancellationToken, Task<bool>> condition)
+        public IIfChainBuilder If(Func<IChainLinkRunContext, CancellationToken, Task<bool>> condition)
         {
             return AddChildChainBuilder(new IfChainBuilder(condition, this));
         }

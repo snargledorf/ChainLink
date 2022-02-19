@@ -100,62 +100,62 @@ namespace ChainLink.ChainBuilders
             return AddChildChainBuilder(new InputChainDelegateRunWithInputResultChainBuilder<T, TResult, TNewResult, DelegateRunWithInputResultChainLink<TResult, TNewResult>>(del, this));
         }
 
-        public new IInputResultChainBuilder<T, TResult> If(Func<bool> condition)
+        public new IInputIfChainBuilder<T, TResult> If(Func<bool> condition)
         {
             return If((_, cancel) => Task.Run(() => condition(), cancel));
         }
 
-        public new IInputResultChainBuilder<T, TResult> If(Func<Task<bool>> condition)
+        public new IInputIfChainBuilder<T, TResult> If(Func<Task<bool>> condition)
         {
             return If((_, __, ___) => condition());
         }
 
-        public new IInputResultChainBuilder<T, TResult> If(Func<IChainLinkRunContext, bool> condition)
+        public new IInputIfChainBuilder<T, TResult> If(Func<IChainLinkRunContext, bool> condition)
         {
             return If((_, context, cancel) => Task.Run(() => condition(context), cancel));
         }
 
-        public new IInputResultChainBuilder<T, TResult> If(Func<IChainLinkRunContext, Task<bool>> condition)
+        public new IInputIfChainBuilder<T, TResult> If(Func<IChainLinkRunContext, Task<bool>> condition)
         {
             return If((_, context, __) => condition(context));
         }
 
-        public new IInputResultChainBuilder<T, TResult> If(Func<IChainLinkRunContext, CancellationToken, bool> condition)
+        public new IInputIfChainBuilder<T, TResult> If(Func<IChainLinkRunContext, CancellationToken, bool> condition)
         {
             return If((_, context, cancel) => Task.Run(() => condition(context, cancel), cancel));
         }
 
-        public new IInputResultChainBuilder<T, TResult> If(Func<IChainLinkRunContext, CancellationToken, Task<bool>> condition)
+        public new IInputIfChainBuilder<T, TResult> If(Func<IChainLinkRunContext, CancellationToken, Task<bool>> condition)
         {
             return If((_, context, cancel) => condition(context, cancel));
         }
 
-        public IInputResultChainBuilder<T, TResult> If(Func<TResult, bool> condition)
+        public IInputIfChainBuilder<T, TResult> If(Func<TResult, bool> condition)
         {
             return If((input, _, cancel) => Task.Run(() => condition(input), cancel));
         }
 
-        public IInputResultChainBuilder<T, TResult> If(Func<TResult, Task<bool>> condition)
+        public IInputIfChainBuilder<T, TResult> If(Func<TResult, Task<bool>> condition)
         {
             return If((input, _, __) => condition(input));
         }
 
-        public IInputResultChainBuilder<T, TResult> If(Func<TResult, IChainLinkRunContext, bool> condition)
+        public IInputIfChainBuilder<T, TResult> If(Func<TResult, IChainLinkRunContext, bool> condition)
         {
             return If((input, context, cancel) => Task.Run(() => condition(input, context), cancel));
         }
 
-        public IInputResultChainBuilder<T, TResult> If(Func<TResult, IChainLinkRunContext, Task<bool>> condition)
+        public IInputIfChainBuilder<T, TResult> If(Func<TResult, IChainLinkRunContext, Task<bool>> condition)
         {
             return If((input, context, _) => condition(input, context));
         }
 
-        public IInputResultChainBuilder<T, TResult> If(Func<TResult, IChainLinkRunContext, CancellationToken, bool> condition)
+        public IInputIfChainBuilder<T, TResult> If(Func<TResult, IChainLinkRunContext, CancellationToken, bool> condition)
         {
             return If((input, context, cancel) => Task.Run(() => condition(input, context, cancel), cancel));
         }
 
-        public IInputResultChainBuilder<T, TResult> If(Func<TResult, IChainLinkRunContext, CancellationToken, Task<bool>> condition)
+        public IInputIfChainBuilder<T, TResult> If(Func<TResult, IChainLinkRunContext, CancellationToken, Task<bool>> condition)
         {
             return AddChildChainBuilder(new InputIfChainBuilder<T, TResult>(condition, this));
         }
@@ -258,62 +258,62 @@ namespace ChainLink.ChainBuilders
             return AddChildChainBuilder(new InputChainDelegateRunWithInputResultChainBuilder<T, TResult, TNewResult, DelegateRunWithInputResultChainLink<TResult, TNewResult>>(del, this));
         }
 
-        public new IInputResultChainBuilder<T, TResult> If(Func<bool> condition)
+        public new IInputIfChainBuilder<T, TResult> If(Func<bool> condition)
         {
             return If((_, cancel) => Task.Run(() => condition(), cancel));
         }
 
-        public new IInputResultChainBuilder<T, TResult> If(Func<Task<bool>> condition)
+        public new IInputIfChainBuilder<T, TResult> If(Func<Task<bool>> condition)
         {
             return If((_, __, ___) => condition());
         }
 
-        public new IInputResultChainBuilder<T, TResult> If(Func<IChainLinkRunContext, bool> condition)
+        public new IInputIfChainBuilder<T, TResult> If(Func<IChainLinkRunContext, bool> condition)
         {
             return If((_, context, cancel) => Task.Run(() => condition(context), cancel));
         }
 
-        public new IInputResultChainBuilder<T, TResult> If(Func<IChainLinkRunContext, Task<bool>> condition)
+        public new IInputIfChainBuilder<T, TResult> If(Func<IChainLinkRunContext, Task<bool>> condition)
         {
             return If((_, context, __) => condition(context));
         }
 
-        public new IInputResultChainBuilder<T, TResult> If(Func<IChainLinkRunContext, CancellationToken, bool> condition)
+        public new IInputIfChainBuilder<T, TResult> If(Func<IChainLinkRunContext, CancellationToken, bool> condition)
         {
             return If((_, context, cancel) => Task.Run(() => condition(context, cancel), cancel));
         }
 
-        public new IInputResultChainBuilder<T, TResult> If(Func<IChainLinkRunContext, CancellationToken, Task<bool>> condition)
+        public new IInputIfChainBuilder<T, TResult> If(Func<IChainLinkRunContext, CancellationToken, Task<bool>> condition)
         {
             return If((_, context, cancel) => condition(context, cancel));
         }
 
-        public IInputResultChainBuilder<T, TResult> If(Func<TResult, bool> condition)
+        public IInputIfChainBuilder<T, TResult> If(Func<TResult, bool> condition)
         {
             return If((input, _, cancel) => Task.Run(() => condition(input), cancel));
         }
 
-        public IInputResultChainBuilder<T, TResult> If(Func<TResult, Task<bool>> condition)
+        public IInputIfChainBuilder<T, TResult> If(Func<TResult, Task<bool>> condition)
         {
             return If((input, _, __) => condition(input));
         }
 
-        public IInputResultChainBuilder<T, TResult> If(Func<TResult, IChainLinkRunContext, bool> condition)
+        public IInputIfChainBuilder<T, TResult> If(Func<TResult, IChainLinkRunContext, bool> condition)
         {
             return If((input, context, cancel) => Task.Run(() => condition(input, context), cancel));
         }
 
-        public IInputResultChainBuilder<T, TResult> If(Func<TResult, IChainLinkRunContext, Task<bool>> condition)
+        public IInputIfChainBuilder<T, TResult> If(Func<TResult, IChainLinkRunContext, Task<bool>> condition)
         {
             return If((input, context, _) => condition(input, context));
         }
 
-        public IInputResultChainBuilder<T, TResult> If(Func<TResult, IChainLinkRunContext, CancellationToken, bool> condition)
+        public IInputIfChainBuilder<T, TResult> If(Func<TResult, IChainLinkRunContext, CancellationToken, bool> condition)
         {
             return If((input, context, cancel) => Task.Run(() => condition(input, context, cancel), cancel));
         }
 
-        public IInputResultChainBuilder<T, TResult> If(Func<TResult, IChainLinkRunContext, CancellationToken, Task<bool>> condition)
+        public IInputIfChainBuilder<T, TResult> If(Func<TResult, IChainLinkRunContext, CancellationToken, Task<bool>> condition)
         {
             return AddChildChainBuilder(new InputIfChainBuilder<T, TResult>(condition, this));
         }

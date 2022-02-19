@@ -18,9 +18,9 @@ namespace ChainLink
     internal class RunChainLinkRunner : IRunChainLinkRunner
     {
         private readonly ChainLinkDescription chainLinkDescription;
-        private readonly IEnumerable<IChainLinkRunner> childLinkRunners;
+        private readonly IEnumerable<IRunChainLinkRunner> childLinkRunners;
 
-        public RunChainLinkRunner(ChainLinkDescription chainLinkDescription, IChainLinkRunner[] childLinkRunners)
+        public RunChainLinkRunner(ChainLinkDescription chainLinkDescription, IRunChainLinkRunner[] childLinkRunners)
         {
             this.chainLinkDescription = chainLinkDescription;
             this.childLinkRunners = childLinkRunners;
@@ -32,7 +32,7 @@ namespace ChainLink
 
             await chainLink.RunAsync(context, cancellationToken);
             foreach (var child in childLinkRunners)
-                await ((IRunChainLinkRunner)child).RunAsync(context, cancellationToken);
+                await child.RunAsync(context, cancellationToken);
         }
     }
 

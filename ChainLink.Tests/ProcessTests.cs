@@ -287,5 +287,53 @@ namespace ChainLink.Tests
 
             Assert.AreEqual(Expected, trimmedString);
         }
+
+        [TestMethod]
+        public async Task Else()
+        {
+            const string Expected = "Hello World";
+
+            string? trimmedString = null;
+            string? otherString = Expected;
+
+            IChain chain = new Chain(configure =>
+            {
+                IIfChainBuilder<string> ifHelloWorldNull = configure
+                    .Run(() => " Hello World ")
+                    .If((string input) => input == null);
+
+                ifHelloWorldNull.RunWithInput(i => otherString = i);
+
+                ifHelloWorldNull
+                    .Else
+                    .RunWithInput(i => i.Trim())
+                    .RunWithInput(i => trimmedString = i);
+            });
+
+            await chain.RunAsync();
+
+            Assert.AreEqual(Expected, trimmedString);
+            Assert.IsNotNull(otherString);
+
+            trimmedString = null;
+
+            IChain<string> inputChain = new Chain<string>(configure =>
+            {
+                IInputIfChainBuilder<string, string> ifHelloWorldNull = configure
+                    .If((string input) => input == null);
+
+                ifHelloWorldNull.RunWithInput(i => otherString = i);
+
+                ifHelloWorldNull
+                    .Else
+                    .RunWithInput(i => i.Trim())
+                    .RunWithInput(i => trimmedString = i);
+            });
+
+            await inputChain.RunAsync(" Hello World ");
+
+            Assert.AreEqual(Expected, trimmedString);
+            Assert.IsNotNull(otherString);
+        }
     }
 }

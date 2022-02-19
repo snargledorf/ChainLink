@@ -24,12 +24,12 @@ namespace ChainLink.ChainBuilders
 
         IResultChainBuilder<T> GetResult<T, TChainLink>(params object[] args) where TChainLink : IResultChainLink<T>;
 
-        IChainBuilder If(Func<bool> condition);
-        IChainBuilder If(Func<Task<bool>> condition);
-        IChainBuilder If(Func<IChainLinkRunContext, bool> condition);
-        IChainBuilder If(Func<IChainLinkRunContext, Task<bool>> condition);
-        IChainBuilder If(Func<IChainLinkRunContext, CancellationToken, bool> condition);
-        IChainBuilder If(Func<IChainLinkRunContext, CancellationToken, Task<bool>> condition);
+        IIfChainBuilder If(Func<bool> condition);
+        IIfChainBuilder If(Func<Task<bool>> condition);
+        IIfChainBuilder If(Func<IChainLinkRunContext, bool> condition);
+        IIfChainBuilder If(Func<IChainLinkRunContext, Task<bool>> condition);
+        IIfChainBuilder If(Func<IChainLinkRunContext, CancellationToken, bool> condition);
+        IIfChainBuilder If(Func<IChainLinkRunContext, CancellationToken, Task<bool>> condition);
     }
 
     //public interface IRunChainBuilder<TChainLink> : IChainBuilder
@@ -68,30 +68,28 @@ namespace ChainLink.ChainBuilders
         IResultChainBuilder<TResult> RunWithInput<TResult>(Func<T, IChainLinkRunContext, CancellationToken, TResult> del);
         IResultChainBuilder<TResult> RunWithInput<TResult>(Func<T, IChainLinkRunContext, CancellationToken, Task<TResult>> del);
 
-        new IResultChainBuilder<T> If(Func<bool> condition);
-        new IResultChainBuilder<T> If(Func<Task<bool>> condition);
-        new IResultChainBuilder<T> If(Func<IChainLinkRunContext, bool> condition);
-        new IResultChainBuilder<T> If(Func<IChainLinkRunContext, Task<bool>> condition);
-        new IResultChainBuilder<T> If(Func<IChainLinkRunContext, CancellationToken, bool> condition);
-        new IResultChainBuilder<T> If(Func<IChainLinkRunContext, CancellationToken, Task<bool>> condition);
+        new IIfChainBuilder<T> If(Func<bool> condition);
+        new IIfChainBuilder<T> If(Func<Task<bool>> condition);
+        new IIfChainBuilder<T> If(Func<IChainLinkRunContext, bool> condition);
+        new IIfChainBuilder<T> If(Func<IChainLinkRunContext, Task<bool>> condition);
+        new IIfChainBuilder<T> If(Func<IChainLinkRunContext, CancellationToken, bool> condition);
+        new IIfChainBuilder<T> If(Func<IChainLinkRunContext, CancellationToken, Task<bool>> condition);
 
-        IResultChainBuilder<T> If(Func<T, bool> condition);
-        IResultChainBuilder<T> If(Func<T, Task<bool>> condition);
-        IResultChainBuilder<T> If(Func<T, IChainLinkRunContext, bool> condition);
-        IResultChainBuilder<T> If(Func<T, IChainLinkRunContext, Task<bool>> condition);
-        IResultChainBuilder<T> If(Func<T, IChainLinkRunContext, CancellationToken, bool> condition);
-        IResultChainBuilder<T> If(Func<T, IChainLinkRunContext, CancellationToken, Task<bool>> condition);
+        IIfChainBuilder<T> If(Func<T, bool> condition);
+        IIfChainBuilder<T> If(Func<T, Task<bool>> condition);
+        IIfChainBuilder<T> If(Func<T, IChainLinkRunContext, bool> condition);
+        IIfChainBuilder<T> If(Func<T, IChainLinkRunContext, Task<bool>> condition);
+        IIfChainBuilder<T> If(Func<T, IChainLinkRunContext, CancellationToken, bool> condition);
+        IIfChainBuilder<T> If(Func<T, IChainLinkRunContext, CancellationToken, Task<bool>> condition);
     }
 
-    //public interface IRunResultChainBuilder<T, TChainLink>
-    //    : IChainBuilder, IRunChainBuilder<TChainLink>, IResultChainBuilder<T, TChainLink>
-    //    where TChainLink : IRunResultChainLink<T>
-    //{
-    //}
+    public interface IIfChainBuilder : IChainBuilder
+    {
+        IChainBuilder Else { get; }
+    }
 
-    //public interface IRunResultChainBuilder<TInput, TResult, TChainLink>
-    //    : IChainBuilder, IRunChainBuilder<TInput, TChainLink>, IResultChainBuilder<TResult, TChainLink>
-    //    where TChainLink : IRunResultChainLink<TInput, TResult>
-    //{
-    //}
+    public interface IIfChainBuilder<T> : IResultChainBuilder<T>
+    {
+        IResultChainBuilder<T> Else { get; }
+    }
 }
